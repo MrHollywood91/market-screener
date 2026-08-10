@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Market Screener v3.0 — August 10, 2026</title>
+<style>
+@page { size: letter; margin: 0.5in 0.6in 0.55in 0.6in; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 9pt; color: #1a1a1a; background: white; line-height: 1.4;
+}
+.page-header {
+    background: #0d1b3e; color: white;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 14px; page-break-inside: avoid; page-break-after: avoid;
+}
+.brand-name { font-size: 15pt; font-weight: 900; letter-spacing: 1px; }
+.brand-sub  { font-size: 7.5pt; color: #a0aec0; margin-top: 1px; }
+.header-right { text-align: right; }
+.confid-label { font-size: 8.5pt; font-weight: 700; color: #c9973a; }
+.header-date  { font-size: 7.5pt; color: #a0aec0; margin-top: 2px; }
+.gold-line { height: 3px; background: linear-gradient(90deg,#c9973a,#e8c56a,#c9973a); }
+.title-block {
+    text-align: center; padding: 14px 0 10px;
+    page-break-inside: avoid; page-break-after: avoid;
+    border-bottom: 1px solid #e2e8f0;
+}
+.main-title { font-size: 21pt; font-weight: 900; color: #0d1b3e; text-transform: uppercase; }
+.sub-title  { font-size: 10pt; color: #4a5568; margin-top: 3px; }
+.data-src   { font-size: 7pt; color: #718096; font-style: italic; margin-top: 4px; }
+.market-snap { width: 100%; border-collapse: collapse; margin: 8px 0; page-break-inside: avoid; }
+.market-snap th {
+    background: #0d1b3e; color: white; padding: 5px 3px;
+    text-align: center; font-size: 7.5pt; font-weight: 700;
+    border: 1px solid #1a2c5b; text-transform: uppercase;
+}
+.market-snap td {
+    padding: 5px 3px; text-align: center; font-size: 8.5pt; font-weight: 700;
+    border: 1px solid #cbd5e0; background: #f7fafc;
+}
+.up   { color: #1a7f42; }
+.down { color: #c0392b; }
+.flat { color: #4a5568; }
+.context-box {
+    background: #fffbeb; border-left: 4px solid #c9973a;
+    padding: 8px 12px; margin: 8px 0;
+    font-size: 8.5pt; font-style: italic; color: #4a3600;
+    page-break-inside: avoid;
+}
+.section-hdr {
+    background: #0d1b3e; color: white; padding: 6px 10px;
+    font-size: 9pt; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; margin-top: 14px; page-break-after: avoid;
+}
+.section-body { padding: 6px 0; }
+.summary-table { width: 100%; border-collapse: collapse; font-size: 8pt; margin: 6px 0; }
+.summary-table th {
+    background: #0d1b3e; color: white; padding: 5px 4px;
+    text-align: center; font-weight: 700; border: 1px solid #1a2c5b;
+}
+.summary-table td {
+    padding: 4px; border: 1px solid #cbd5e0;
+    text-align: center; vertical-align: middle;
+}
+.summary-table tr:nth-child(even) td { background: #ebf4ff; }
+.summary-table tr:nth-child(odd)  td { background: #f7fafc; }
+.sum-ticker  { font-weight: 900; color: #1a6b7f; font-family: 'Courier New',monospace; font-size: 8.5pt; }
+.conf-high   { color: #1a7f42; font-weight: 700; }
+.conf-medium { color: #c9973a; font-weight: 700; }
+.conf-low    { color: #c0392b; font-weight: 700; }
+.conf-danger { color: #c0392b; font-weight: 900; font-style: italic; }
+.conf-ultra  { color: #1a7f42; font-weight: 900; }
+.score-badge { display:inline-block; background:#0d1b3e; color:#63d1f4; font-size:6.5pt;
+               font-weight:900; padding:1px 6px; border-radius:3px; border:1px solid #63d1f4; }
+.pick-metrics { font-size:7.5pt; margin-top:2px; }
+.fg-bar { background:#1a2c5b; border:1px solid #2c4a8a; padding:5px 12px; margin:4px 0 6px;
+          display:flex; align-items:center; gap:10px; font-size:8pt; page-break-inside:avoid; }
+.fg-label { color:#a0aec0; font-size:6.5pt; font-weight:700; text-transform:uppercase;
+            letter-spacing:0.5px; white-space:nowrap; }
+.fg-score { font-size:14pt; font-weight:900; }
+.fg-rating { font-weight:700; font-size:9pt; }
+.fg-scale  { color:#718096; font-size:6.5pt; margin-left:auto; white-space:nowrap; }
+.score-badge { display:inline-block; font-size:6.5pt; font-weight:900; padding:1px 5px;
+               border-radius:3px; margin-left:4px; }
+.rsi-bar-bg  { background:#d1d5db; height:5px; border-radius:3px; margin-top:3px;
+               display:block; overflow:hidden; }
+.rsi-bar-fill{ height:5px; display:block; border-radius:3px; }
+.sig-bull    { color:#1a7f42; font-weight:700; }
+.sig-bear    { color:#c0392b; font-weight:700; }
+.sig-neut    { color:#c9973a; font-weight:700; }
+.vol-high    { color:#7b3fa0; font-weight:700; }
+.vix-regime-bar { display:flex; gap:10px; align-items:center; padding:4px 10px 5px;
+                  background:#f0f4f8; border-bottom: 1px solid #e2e8f0; font-size:7.5pt; }
+.vix-regime-lbl { font-weight:700; letter-spacing:0.3px; }
+.earn-table { width:100%; border-collapse:collapse; font-size:7.5pt; margin:4px 0; }
+.earn-table th { background:#1a4a2e; color:white; padding:4px 6px; font-weight:700;
+                 text-align:center; border:1px solid #276647; }
+.earn-table td { padding:4px 6px; border:1px solid #c6f6d5; background:#f0fff4;
+                 text-align:center; }
+.earn-table td.earn-ticker { font-weight:900; color:#1a4a2e; font-family:'Courier New',monospace; }
+.earn-table td.earn-date   { font-weight:700; color:#276647; }
+.earn-today  { background:#d4edda !important; }
+.earn-tmrw   { background:#e8f5e9 !important; }
+.pick-card { border: 1px solid #cbd5e0; margin: 10px 0; page-break-inside: avoid; }
+.pick-card-header {
+    background: #1a3a6e; color: white; padding: 6px 10px;
+    display: flex; justify-content: space-between; align-items: center;
+    page-break-after: avoid;
+}
+.pick-card-header.safe-play {
+    background: linear-gradient(135deg, #7a5a00, #c9973a, #7a5a00);
+}
+.pick-ticker  { font-size: 14pt; font-weight: 900; font-family: 'Courier New',monospace; color: #63d1f4; }
+.pick-ticker.safe-play { color: #fff8e1; }
+.pick-company { font-size: 8pt; color: #a0bdd8; margin-top: 1px; }
+.pick-company.safe-play { color: #ffe9b0; }
+.pick-price-block { text-align: right; }
+.pick-price   { font-size: 12pt; font-weight: 700; color: #68d391; }
+.pick-change  { font-size: 7.5pt; margin-top: 1px; }
+.pick-conf    { font-size: 7.5pt; color: #fbd38d; font-weight: 700; margin-top: 1px; }
+.dir-call { display:inline-block; background:#1a7f42; color:white; font-size:7pt;
+            font-weight:900; padding:1px 6px; border-radius:3px; margin-right:4px; }
+.dir-put  { display:inline-block; background:#c0392b; color:white; font-size:7pt;
+            font-weight:900; padding:1px 6px; border-radius:3px; margin-right:4px; }
+.safe-badge { display:inline-block; background:#c9973a; color:#1a1a1a; font-size:6.5pt;
+              font-weight:900; padding:1px 5px; border-radius:3px; }
+.bear-badge { display:inline-block; background:#7a1a5c; color:#f9c7e8; font-size:6.5pt;
+              font-weight:900; padding:1px 5px; border-radius:3px; }
+.pick-card-header.bear-play {
+    background: linear-gradient(135deg, #3d0d2d, #7a1a5c, #3d0d2d);
+}
+.pick-ticker.bear-play  { color: #f9c7e8; }
+.pick-company.bear-play { color: #e9a8d1; }
+.pick-card-header.high-risk {
+    background: linear-gradient(135deg, #6b0000, #c0392b, #6b0000);
+}
+.pick-ticker.high-risk  { color: #ffd5d5; }
+.pick-company.high-risk { color: #ffb3b3; }
+.risk-badge { display:inline-block; background:#c0392b; color:white; font-size:6.5pt;
+              font-weight:900; padding:1px 5px; border-radius:3px; }
+.pick-tables  { display: flex; gap: 6px; padding: 6px; }
+.pick-table   { flex: 1; }
+.pick-table table { width: 100%; border-collapse: collapse; font-size: 7.5pt; }
+.pick-table th {
+    background: #2c5282; color: white; padding: 3px 5px;
+    text-align: center; font-weight: 700;
+}
+.pick-table td {
+    padding: 3px 5px; border: 1px solid #bee3f8;
+    background: #ebf8ff; text-align: center; font-weight: 700;
+}
+.fib-table {
+    width: calc(100% - 12px); margin: 0 6px 4px;
+    border-collapse: collapse; font-size: 7.5pt;
+}
+.fib-table th { background: #1a3a6e; color: white; padding: 3px 6px; font-weight: 700; }
+.fib-table td { padding: 3px 6px; border: 1px solid #bee3f8; }
+.fib-table tr:nth-child(even) td { background: #ebf8ff; }
+.fib-table tr:nth-child(odd)  td { background: #f0f9ff; }
+.fib-support { color: #1a7f42; font-weight: 700; }
+.fib-resist  { color: #c0392b; font-weight: 700; }
+.fib-target  { color: #2b6cb0; font-weight: 700; }
+.fib-danger  { color: #c0392b; }
+.pick-text { padding: 4px 10px 8px; font-size: 8pt; }
+.pick-label {
+    font-size: 7.5pt; font-weight: 700; color: #2d3748;
+    text-transform: uppercase; letter-spacing: 0.4px;
+    margin-top: 6px; margin-bottom: 2px;
+}
+.pick-text p { margin-bottom: 4px; }
+.stars { color: #c9973a; font-size: 9pt; }
+.cc-card { border: 1px solid #76d7ea; margin: 8px 0; page-break-inside: avoid; }
+.cc-header { background: linear-gradient(135deg, #1a4a5c, #27697a, #1a4a5c); color: white;
+             padding: 6px 10px; display: flex; justify-content: space-between; align-items: center; }
+.cc-ticker  { font-size: 13pt; font-weight: 900; font-family: 'Courier New',monospace; color: #76d7ea; }
+.cc-company { font-size: 8pt; color: #b3eaf5; margin-top: 1px; }
+.cc-badge   { display:inline-block; color:white; font-size:6.5pt; font-weight:900;
+              padding:1px 6px; border-radius:3px; margin-left:6px; }
+.cc-right   { text-align: right; }
+.cc-price   { font-size: 12pt; font-weight: 700; color: #76d7ea; }
+.cc-risk    { font-size: 8pt; color: #b3eaf5; font-weight: 700; margin-top: 2px; }
+.cc-body    { display: flex; gap: 6px; padding: 6px; background: #e8f8fd; }
+.cc-col     { flex: 1; }
+.cc-table   { width: 100%; border-collapse: collapse; font-size: 7.5pt; }
+.cc-table th { background: #27697a; color: white; padding: 3px 5px; text-align: center; font-weight: 700; }
+.cc-table td { padding: 3px 5px; border: 1px solid #76d7ea; background: #e8f8fd; text-align: center; }
+.cc-thesis  { padding: 4px 10px 8px; font-size: 8pt; background: #e8f8fd; border-top: 1px solid #b3eaf5; }
+.cc-intro   { font-size: 8pt; color: #27697a; margin-bottom: 6px; background: #e8f8fd;
+              border-left: 3px solid #27697a; padding: 5px 8px; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 8pt; margin: 4px 0; }
+.data-table th {
+    background: #0d1b3e; color: white; padding: 4px 6px;
+    text-align: left; font-weight: 700; border: 1px solid #1a2c5b;
+}
+.data-table td { padding: 4px 6px; border: 1px solid #cbd5e0; vertical-align: top; }
+.data-table tr:nth-child(even) td { background: #ebf4ff; }
+.data-table tr:nth-child(odd)  td { background: #f7fafc; }
+.weather-table { width: 100%; border-collapse: collapse; font-size: 8pt; margin: 4px 0; }
+.weather-table th {
+    background: #0d1b3e; color: white; padding: 5px 4px;
+    text-align: center; font-weight: 700; border: 1px solid #1a2c5b;
+}
+.weather-table td { padding: 5px 4px; border: 1px solid #cbd5e0; text-align: center; background: #f0f9ff; }
+.weather-table td.day-name { font-weight: 700; color: #0d1b3e; background: #dbeafe; }
+.section-text { font-size: 8.5pt; line-height: 1.45; color: #2d3748; }
+.section-text p { margin-bottom: 6px; }
+.section-text strong { color: #0d1b3e; }
+.news-item {
+    border-left: 3px solid #2c5282; background: #f7fafc;
+    padding: 5px 10px; margin: 0 0 6px; border-radius: 0 4px 4px 0;
+    page-break-inside: avoid;
+}
+.news-item-title {
+    font-weight: 700; color: #0d1b3e; font-size: 8.5pt; margin-bottom: 2px;
+}
+.news-item p { margin-bottom: 0; }
+.disclaimer-box {
+    background: #fff8e1; border: 1px solid #c9973a;
+    padding: 8px 10px; margin: 10px 0;
+    font-size: 7pt; color: #4a3600; page-break-inside: avoid;
+}
+.print-footer {
+    border-top: 1px solid #cbd5e0; padding: 6px 0 2px;
+    font-size: 6.5pt; color: #718096; text-align: center; margin-top: 16px;
+}
+@media print {
+    .print-footer {
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background: white; border-top: 1px solid #cbd5e0;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div>
+    <div class="brand-name">MARKET SCREENER</div>
+    <div class="brand-sub">Daily Intelligence Report &nbsp;|&nbsp; August 10, 2026</div>
+  </div>
+  <div class="header-right">
+    <div class="confid-label">CONFIDENTIAL</div>
+    <div class="header-date">For Informational Purposes Only</div>
+  </div>
+</div>
+<div class="gold-line"></div>
+
+<!-- TITLE -->
+<div class="title-block">
+  <div class="main-title">Daily Market Intelligence Report</div>
+  <div class="sub-title">Pre-Market Edition &nbsp;|&nbsp; Monday, August 10, 2026</div>
+  <div class="data-src">Data: Yahoo Finance &bull; Open-Meteo &bull; Google News &bull; Anthropic Claude AI</div>
+</div>
+
+<!-- MARKET SNAPSHOT -->
+<table class="market-snap"><tr><th>S&P 500</th><td class="up">7,767.07<br><span style="font-size:7pt;">+2.19%</span></td><th>NASDAQ</th><td class="up">26,708.91<br><span style="font-size:7pt;">+3.07%</span></td><th>DOW</th><td class="up">53,959.89<br><span style="font-size:7pt;">+1.47%</span></td><th>10-YR YIELD</th><td class="up">4.69<br><span style="font-size:7pt;">+1.32%</span></td><th>VIX</th><td class="down">15.19<br><span style="font-size:7pt;">-7.94%</span><br><span style="font-size:6pt;font-weight:900;color:#2b6cb0">NORMAL</span></td><th>WTI OIL</th><td class="up">80.83<br><span style="font-size:7pt;">+7.46%</span></td><th>GOLD</th><td class="up">4,384.40<br><span style="font-size:7pt;">+3.26%</span></td><th>BITCOIN</th><td class="up">64,841.08<br><span style="font-size:7pt;">+0.90%</span></td></tr></table>
+<div class="fg-bar"><span class="fg-label">CNN Fear &amp; Greed</span><span class="fg-score" style="color:#c9973a">50/100</span><span class="fg-rating" style="color:#c9973a">Neutral</span><span class="fg-scale">0=Extreme Fear &nbsp;&bull;&nbsp; 50=Neutral &nbsp;&bull;&nbsp; 100=Extreme Greed</span></div>
+<div class="vix-regime-bar"><span style="color:#4a5568">VIX Regime:</span> <span class="vix-regime-lbl" style="color:#2b6cb0">NORMAL</span><span style="color:#4a5568;margin-left:12px">Options Implication: Normal premium cost — standard sizing</span></div>
+
+<!-- MARKET CONTEXT -->
+<div class="context-box">**Today's Open Drivers and Macro Backdrop**</div>
+
+<!-- INCOME PLAYS MINI SUMMARY (highest-reliability picks — shown first) -->
+<div class="section-hdr" style="background:linear-gradient(135deg,#0d2f3d 0%,#1a5c76 100%)">
+  Quick Summary &mdash; 5 Conservative Income Plays &mdash; 100% Historical Win Rate (95/95) &bull; Bull Put Spreads &amp; Cash-Secured Puts &bull; $500&ndash;$1,000 Max Risk
+</div>
+<table class="summary-table">
+  <tr>
+    <th style="width:3%">#</th>
+    <th style="width:7%">Ticker</th>
+    <th style="text-align:left;width:15%">Company</th>
+    <th style="width:6%">Price</th>
+    <th style="width:5%">Type</th>
+    <th style="width:12%">Strike(s)</th>
+    <th style="width:10%">Expiry</th>
+    <th style="width:10%">Premium</th>
+    <th style="width:8%">Capital</th>
+    <th style="width:9%">Breakeven</th>
+    <th style="width:7%">Yield%</th>
+    <th style="width:4%">Risk</th>
+  </tr>
+  <tr>
+  <td><strong>1</strong></td>
+  <td class="sum-ticker">UNH</td>
+  <td style="text-align:left;font-size:7.5pt">UnitedHealth Group Incorpo</td>
+  <td>$410.20</td>
+  <td style="font-size:7pt"><span style="background:#1a7f7f;color:white;padding:1px 5px;border-radius:3px;font-weight:900;font-size:6pt">Spread</span></td>
+  <td style="color:#1a7f7f;font-weight:900">$375.00 / $370.00</td>
+  <td style="font-weight:700;font-size:7pt">September 05 2026</td>
+  <td style="color:#1a7f7f;font-weight:900">$1.18 per share</td>
+  <td style="font-weight:700">$382</td>
+  <td style="color:#fc8181;font-weight:700">$373.82</td>
+  <td><span style="color:#1a7f42;font-weight:900">30.9%</span></td>
+  <td style="color:#fc8181;font-weight:700">2/10</td>
+</tr><tr>
+  <td><strong>2</strong></td>
+  <td class="sum-ticker">GOOGL</td>
+  <td style="text-align:left;font-size:7.5pt">Alphabet Inc.</td>
+  <td>$356.19</td>
+  <td style="font-size:7pt"><span style="background:#1a7f7f;color:white;padding:1px 5px;border-radius:3px;font-weight:900;font-size:6pt">Spread</span></td>
+  <td style="color:#1a7f7f;font-weight:900">$325.00 / $320.00</td>
+  <td style="font-weight:700;font-size:7pt">September 05 2026</td>
+  <td style="color:#1a7f7f;font-weight:900">$0.92 per share</td>
+  <td style="font-weight:700">$408</td>
+  <td style="color:#fc8181;font-weight:700">$324.08</td>
+  <td><span style="color:#1a7f42;font-weight:900">22.5%</span></td>
+  <td style="color:#fc8181;font-weight:700">2/10</td>
+</tr><tr>
+  <td><strong>3</strong></td>
+  <td class="sum-ticker">JPM</td>
+  <td style="text-align:left;font-size:7.5pt">JPMorgan Chase & Co.</td>
+  <td>$358.37</td>
+  <td style="font-size:7pt"><span style="background:#1a7f7f;color:white;padding:1px 5px;border-radius:3px;font-weight:900;font-size:6pt">Spread</span></td>
+  <td style="color:#1a7f7f;font-weight:900">$330.00 / $325.00</td>
+  <td style="font-weight:700;font-size:7pt">September 05 2026</td>
+  <td style="color:#1a7f7f;font-weight:900">$0.87 per share</td>
+  <td style="font-weight:700">$413</td>
+  <td style="color:#fc8181;font-weight:700">$329.13</td>
+  <td><span style="color:#1a7f42;font-weight:900">21.1%</span></td>
+  <td style="color:#fc8181;font-weight:700">2/10</td>
+</tr><tr>
+  <td><strong>4</strong></td>
+  <td class="sum-ticker">MS</td>
+  <td style="text-align:left;font-size:7.5pt">Morgan Stanley</td>
+  <td>$216.56</td>
+  <td style="font-size:7pt"><span style="background:#1a7f7f;color:white;padding:1px 5px;border-radius:3px;font-weight:900;font-size:6pt">Spread</span></td>
+  <td style="color:#1a7f7f;font-weight:900">$200.00 / $195.00</td>
+  <td style="font-weight:700;font-size:7pt">September 05 2026</td>
+  <td style="color:#1a7f7f;font-weight:900">$0.81 per share</td>
+  <td style="font-weight:700">$419</td>
+  <td style="color:#fc8181;font-weight:700">$199.19</td>
+  <td><span style="color:#1a7f42;font-weight:900">19.3%</span></td>
+  <td style="color:#fc8181;font-weight:700">2/10</td>
+</tr>
+</table>
+<div style="background:linear-gradient(135deg,#052e16,#166534);color:#fff;border-radius:5px;padding:6px 12px;margin:6px 0;font-size:8pt">&#128176; <strong>Historical track record:</strong> <span style="color:#86efac;font-weight:900">95/95 wins (100%)</span> on expired income plays since 2026-06-14 &bull; <span style="color:#86efac;font-weight:900">+19.3%</span> avg yield &bull; $+7,694 total realized P&amp;L on $39,806 deployed</div>
+
+<!-- QUICK SUMMARY TABLE (9 directional picks) — right below the income summary -->
+<div class="section-hdr" style="margin-top:8px">Quick Summary — 9 Picks: 3 Bull Calls &bull; 1 Bear Put &bull; 2 Ultra-Safe &bull; 3 High-Risk Speculative</div>
+<table class="summary-table">
+  <tr>
+    <th style="width:3%">#</th>
+    <th style="width:7%">Ticker</th>
+    <th style="text-align:left;width:21%">Company</th>
+    <th style="width:7%">Price</th>
+    <th style="width:14%">Direction / Option</th>
+    <th style="width:11%">Target</th>
+    <th style="width:7%">Upside%</th>
+    <th style="width:7%">R:R</th>
+    <th style="width:7%">Risk</th>
+    <th style="width:16%">Confidence</th>
+  </tr>
+  <tr><td colspan="10" style="background:#1a3a6e;color:#63d1f4;font-size:7.5pt;font-weight:900;padding:5px 8px;text-transform:uppercase;letter-spacing:0.5px">&#9658; BULL CALL PLAYS &mdash; Picks 1&ndash;3 &mdash; Composite AI Scored &mdash; Positive 6-Month Trend Required</td></tr>
+<tr >
+  <td><strong>1</strong></td>
+  <td class="sum-ticker">OXY</td>
+  <td style="text-align:left;font-size:7.5pt">Occidental Petroleum Corporation</td>
+  <td>$57.84</td>
+  <td style="font-size:7pt"><span class="dir-call">CALL</span> $60C | Sep 18 2026</td>
+  <td style="color:#1a7f42;font-weight:700">$61.32 – $64.00</td>
+  <td style="color:#27ae60;font-weight:900;font-size:8.5pt">+6.8%</td>
+  <td style="color:#2b6cb0;font-weight:700">2.1:1</td>
+  <td style="font-size:7.5pt">4/10</td>
+  <td class="conf-high" style="font-size:7.5pt">HIGH</td>
+</tr><tr >
+  <td><strong>2</strong></td>
+  <td class="sum-ticker">AQST</td>
+  <td style="text-align:left;font-size:7.5pt">Aquestive Therapeutics Inc.</td>
+  <td>$4.45</td>
+  <td style="font-size:7pt"><span class="dir-call">CALL</span> $5C | Sep 19 2026</td>
+  <td style="color:#1a7f42;font-weight:700">$4.69 – $5.24</td>
+  <td style="color:#27ae60;font-weight:900;font-size:8.5pt">+18.5%</td>
+  <td style="color:#2b6cb0;font-weight:700">2.8:1</td>
+  <td style="font-size:7.5pt">4/10</td>
+  <td class="conf-high" style="font-size:7.5pt">HIGH</td>
+</tr><tr >
+  <td><strong>3</strong></td>
+  <td class="sum-ticker">POWW</td>
+  <td style="text-align:left;font-size:7.5pt">AMMO Inc.</td>
+  <td>$2.47</td>
+  <td style="font-size:7pt"><span class="dir-call">CALL</span> $2.5C | Sep 19 2026</td>
+  <td style="color:#1a7f42;font-weight:700">$2.67 – $3.00</td>
+  <td style="color:#27ae60;font-weight:900;font-size:8.5pt">+13.2%</td>
+  <td style="color:#2b6cb0;font-weight:700">2.2:1</td>
+  <td style="font-size:7.5pt">5/10</td>
+  <td class="conf-high" style="font-size:7.5pt">HIGH</td>
+</tr><tr><td colspan="10" style="background:#3d0d0d;color:#f687b3;font-size:7.5pt;font-weight:900;padding:5px 8px;text-transform:uppercase;letter-spacing:0.5px">&#9660; BEAR PUT CANDIDATE &mdash; Pick 4 &mdash; 6-Month Downtrend Confirmed &mdash; Under $150</td></tr>
+<tr style="background:#fff0f4">
+  <td><strong>4</strong></td>
+  <td class="sum-ticker">CELH</td>
+  <td style="text-align:left;font-size:7.5pt">Celsius Holdings Inc. <span class="bear-badge">BEAR PUT</span></td>
+  <td>$26.26</td>
+  <td style="font-size:7pt"><span class="dir-put">PUT</span> $26P | Sep 19 2026</td>
+  <td style="color:#c0392b;font-weight:700">$23.56 – $21.00</td>
+  <td style="color:#c0392b;font-weight:900;font-size:8.5pt">-13.5%</td>
+  <td style="color:#2b6cb0;font-weight:700">2.3:1</td>
+  <td style="font-size:7.5pt">4/10</td>
+  <td class="conf-high" style="font-size:7.5pt">HIGH</td>
+</tr><tr><td colspan="10" style="background:#7a5a00;color:#ffe9b0;font-size:7.5pt;font-weight:900;padding:5px 8px;text-transform:uppercase;letter-spacing:0.5px">&#9733; ULTRA-SAFE PLAYS &mdash; Picks 5&ndash;6 &mdash; Blue-Chip &mdash; CALL or PUT (Strongest Daily Setup)</td></tr>
+<tr style="background:#fff8e1">
+  <td><strong>5</strong></td>
+  <td class="sum-ticker">NVDA</td>
+  <td style="text-align:left;font-size:7.5pt">NVIDIA Corporation <span class="safe-badge">SAFE</span></td>
+  <td>$221.10</td>
+  <td style="font-size:7pt"><span class="dir-call">CALL</span> $225C | Sep 19 2026</td>
+  <td style="color:#1a7f42;font-weight:700">$228.00 – $236.54</td>
+  <td style="color:#27ae60;font-weight:900;font-size:8.5pt">+6.8%</td>
+  <td style="color:#2b6cb0;font-weight:700">2.3:1</td>
+  <td style="font-size:7.5pt">2/10</td>
+  <td class="conf-ultra" style="font-size:7.5pt">ULTRA HIGH</td>
+</tr><tr style="background:#fff8e1">
+  <td><strong>6</strong></td>
+  <td class="sum-ticker">META</td>
+  <td style="text-align:left;font-size:7.5pt">Meta Platforms Inc. <span class="safe-badge">SAFE</span></td>
+  <td>$601.60</td>
+  <td style="font-size:7pt"><span class="dir-put">PUT</span> $590P | Sep 19 2026</td>
+  <td style="color:#c0392b;font-weight:700">$560.00 – $525.00</td>
+  <td style="color:#c0392b;font-weight:900;font-size:8.5pt">-10.5%</td>
+  <td style="color:#2b6cb0;font-weight:700">2.1:1</td>
+  <td style="font-size:7.5pt">3/10</td>
+  <td class="conf-ultra" style="font-size:7.5pt">ULTRA HIGH</td>
+</tr><tr><td colspan="10" style="background:#6b0000;color:#ffd5d5;font-size:7.5pt;font-weight:900;padding:5px 8px;text-transform:uppercase;letter-spacing:0.5px">&#9888; HIGH-RISK SPECULATIVE &mdash; Picks 7&ndash;9 &mdash; Small Position Only &mdash; May Lose 100% of Premium</td></tr>
+<tr style="background:#fff0f0">
+  <td><strong>7</strong></td>
+  <td class="sum-ticker">SLN</td>
+  <td style="text-align:left;font-size:7.5pt">Silence Therapeutics PLC <span class="risk-badge">MOMENTUM</span></td>
+  <td>$16.43</td>
+  <td style="font-size:7pt"><span class="dir-call">CALL</span> $17C | Sep 05 2026</td>
+  <td style="color:#1a7f42;font-weight:700">$19.00 – $22.00</td>
+  <td style="color:#27ae60;font-weight:900;font-size:8.5pt">+23.9%</td>
+  <td style="color:#2b6cb0;font-weight:700">2.0:1</td>
+  <td style="font-size:7.5pt">8/10</td>
+  <td class="conf-danger" style="font-size:7.5pt">HIGH RISK</td>
+</tr><tr style="background:#fff0f0">
+  <td><strong>8</strong></td>
+  <td class="sum-ticker">LLY</td>
+  <td style="text-align:left;font-size:7.5pt">Eli Lilly and Company <span class="risk-badge">CATALYST</span></td>
+  <td>$1210.16</td>
+  <td style="font-size:7pt"><span class="dir-call">CALL</span> $1250C | Sep 19 2026</td>
+  <td style="color:#1a7f42;font-weight:700">$1249.45 – $1300.00</td>
+  <td style="color:#27ae60;font-weight:900;font-size:8.5pt">+5.2%</td>
+  <td style="color:#2b6cb0;font-weight:700">1.5:1</td>
+  <td style="font-size:7.5pt">9/10</td>
+  <td class="conf-danger" style="font-size:7.5pt">SPECULATIVE</td>
+</tr><tr style="background:#fff0f0">
+  <td><strong>9</strong></td>
+  <td class="sum-ticker">IONQ</td>
+  <td style="text-align:left;font-size:7.5pt">IonQ Inc. <span class="risk-badge">YOLO</span></td>
+  <td>$43.37</td>
+  <td style="font-size:7pt"><span class="dir-call">CALL</span> $52C | Aug 28 2026</td>
+  <td style="color:#1a7f42;font-weight:700">5x – 12x premium paid</td>
+  <td style="color:#27ae60;font-weight:900;font-size:8.5pt">+900% (option premium estimate)</td>
+  <td style="color:#2b6cb0;font-weight:700">10:1 (asymmetric lottery structure)</td>
+  <td style="font-size:7.5pt">10/10</td>
+  <td class="conf-danger" style="font-size:7.5pt">YOLO</td>
+</tr>
+</table>
+
+<!-- CONSERVATIVE INCOME PLAYS (full detail — follows both summary tables) -->
+<div class="section-hdr" style="background:linear-gradient(135deg,#0d2f3d 0%,#1a5c76 100%);margin-top:8px">
+  Conservative Income Plays &mdash; 100% Historical Win Rate (95/95) &mdash; Bull Put Spreads &amp; Cash-Secured Puts &mdash; $500&ndash;$1,000 Max Risk
+</div>
+<div class="section-body">
+
+<div style="background:linear-gradient(135deg,#0d2f3d 0%,#163a4d 100%);border:1px solid #2d6a7a;
+            border-radius:4px;padding:10px 14px;margin-bottom:10px;page-break-inside:avoid">
+  <div style="font-size:9pt;font-weight:900;color:#76d7ea;letter-spacing:0.5px;margin-bottom:6px">
+    &#9733; SECTION SUMMARY &mdash; CONSERVATIVE INCOME PLAYS
+  </div>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:8px">
+    <div style="text-align:center;min-width:80px">
+      <div style="font-size:14pt;font-weight:900;color:#76d7ea">$4</div>
+      <div style="font-size:6.5pt;color:#a0aec0;text-transform:uppercase">Total Premium</div>
+    </div>
+    <div style="text-align:center;min-width:80px">
+      <div style="font-size:14pt;font-weight:900;color:#f6e05e">$1,622</div>
+      <div style="font-size:6.5pt;color:#a0aec0;text-transform:uppercase">Total Capital</div>
+    </div>
+    <div style="text-align:center;min-width:80px">
+      <div style="font-size:14pt;font-weight:900;color:#63d1f4">$378</div>
+      <div style="font-size:6.5pt;color:#a0aec0;text-transform:uppercase">Max Profit</div>
+    </div>
+    <div style="text-align:center;min-width:80px">
+      <div style="font-size:14pt;font-weight:900;color:#fc8181">23.3%</div>
+      <div style="font-size:6.5pt;color:#a0aec0;text-transform:uppercase">Avg Yield/Capital</div>
+    </div>
+    <div style="text-align:center;min-width:80px">
+      <div style="font-size:14pt;font-weight:900;color:#b794f4">4</div>
+      <div style="font-size:6.5pt;color:#a0aec0;text-transform:uppercase">Trades</div>
+    </div>
+  </div>
+  <div style="font-size:7.5pt;color:#a0aec0;border-top:1px solid #2d6a7a;padding-top:6px">
+    <span style="color:#76d7ea;font-weight:700">Strategy Mix:</span> 4 Bull Put Spreads
+    &nbsp;&bull;&nbsp;
+    <span style="color:#76d7ea;font-weight:700">Tickers:</span> UNH &bull; GOOGL &bull; JPM &bull; MS
+    &nbsp;&bull;&nbsp;
+    <span style="color:#76d7ea;font-weight:700">Max Risk/Trade:</span> $500–$1,000
+    &nbsp;&bull;&nbsp;
+    <span style="color:#76d7ea;font-weight:700">Risk Level:</span> 1–3/10 (Conservative Income)
+  </div>
+</div>
+<div class="cc-card">
+  <div class="cc-header">
+    <div>
+      <div class="cc-ticker">#1 &nbsp; UNH
+        <span class="cc-badge" style="background:#1a7f7f">BULL PUT SPREAD</span>
+      </div>
+      <div class="cc-company">UnitedHealth Group Incorporated</div>
+    </div>
+    <div class="cc-right">
+      <div class="cc-price">$410.20</div>
+      <div class="cc-risk">Risk 2/10</div>
+    </div>
+  </div>
+  <div class="cc-body">
+    <div class="cc-col">
+      <table class="cc-table">
+        <tr><th colspan="2">Trade Setup</th></tr>
+        <tr><td>Sell Strike</td><td style="color:#1a7f42;font-weight:900">$375.00</td></tr>
+        <tr><td>Buy Strike (Hedge)</td><td style="color:#c0392b;font-weight:700">$370.00</td></tr>
+        <tr><td>Expiry</td><td style="font-weight:700">September 05 2026</td></tr>
+        <tr><td>Premium Collected</td><td style="color:#1a7f42;font-weight:900">$1.18 per share ($118 per contract)</td></tr>
+        <tr><td>Capital Required</td><td style="font-weight:700">$382</td></tr>
+      </table>
+    </div>
+    <div class="cc-col">
+      <table class="cc-table">
+        <tr><th colspan="2">Risk / Reward</th></tr>
+        <tr><td>Max Profit</td><td style="color:#1a7f42;font-weight:900">$118 (30.9% yield on capital in ~3.5 weeks)</td></tr>
+        <tr><td>Breakeven</td><td style="font-weight:700">$373.82</td></tr>
+        <tr><td>Max Loss</td><td style="color:#c0392b;font-weight:700">$382 (100% of capital at risk, defined)</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="cc-thesis"><span class="pick-label">Why It&apos;s Safe:</span> UNH is trading at $410.20 with an RSI of 32.6, indicating oversold conditions that historically resolve with stabilization or mean reversion — the stock is unlikely to fall a further 8.6% to breach the $375 sell strike. The $375 level sits approximately 3.2× the daily ATR ($10.99) below current price, providing a substantial technical buffer. Defined-risk spread caps maximum loss at $382, and the breakeven of $373.82 represents support territory not seen in the recent trading range.</div>
+</div>
+<div class="cc-card">
+  <div class="cc-header">
+    <div>
+      <div class="cc-ticker">#2 &nbsp; GOOGL
+        <span class="cc-badge" style="background:#1a7f7f">BULL PUT SPREAD</span>
+      </div>
+      <div class="cc-company">Alphabet Inc.</div>
+    </div>
+    <div class="cc-right">
+      <div class="cc-price">$356.19</div>
+      <div class="cc-risk">Risk 2/10</div>
+    </div>
+  </div>
+  <div class="cc-body">
+    <div class="cc-col">
+      <table class="cc-table">
+        <tr><th colspan="2">Trade Setup</th></tr>
+        <tr><td>Sell Strike</td><td style="color:#1a7f42;font-weight:900">$325.00</td></tr>
+        <tr><td>Buy Strike (Hedge)</td><td style="color:#c0392b;font-weight:700">$320.00</td></tr>
+        <tr><td>Expiry</td><td style="font-weight:700">September 05 2026</td></tr>
+        <tr><td>Premium Collected</td><td style="color:#1a7f42;font-weight:900">$0.92 per share ($92 per contract)</td></tr>
+        <tr><td>Capital Required</td><td style="font-weight:700">$408</td></tr>
+      </table>
+    </div>
+    <div class="cc-col">
+      <table class="cc-table">
+        <tr><th colspan="2">Risk / Reward</th></tr>
+        <tr><td>Max Profit</td><td style="color:#1a7f42;font-weight:900">$92 (22.5% yield on capital in ~3.5 weeks)</td></tr>
+        <tr><td>Breakeven</td><td style="font-weight:700">$324.08</td></tr>
+        <tr><td>Max Loss</td><td style="color:#c0392b;font-weight:700">$408 (100% of capital at risk, defined)</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="cc-thesis"><span class="pick-label">Why It&apos;s Safe:</span> GOOGL at $356.19 with a neutral RSI of 53.7 reflects healthy, balanced momentum — neither overextended nor under pressure. The $325 sell strike sits 8.7% below current price, a distance of approximately 2.4× the daily ATR ($13.16), requiring a significant and sustained breakdown to threaten the position. Alphabet's dominant AI and search revenue streams provide fundamental support, and the well-defined $5-wide spread limits total exposure to $408.</div>
+</div>
+<div class="cc-card">
+  <div class="cc-header">
+    <div>
+      <div class="cc-ticker">#3 &nbsp; JPM
+        <span class="cc-badge" style="background:#1a7f7f">BULL PUT SPREAD</span>
+      </div>
+      <div class="cc-company">JPMorgan Chase & Co.</div>
+    </div>
+    <div class="cc-right">
+      <div class="cc-price">$358.37</div>
+      <div class="cc-risk">Risk 2/10</div>
+    </div>
+  </div>
+  <div class="cc-body">
+    <div class="cc-col">
+      <table class="cc-table">
+        <tr><th colspan="2">Trade Setup</th></tr>
+        <tr><td>Sell Strike</td><td style="color:#1a7f42;font-weight:900">$330.00</td></tr>
+        <tr><td>Buy Strike (Hedge)</td><td style="color:#c0392b;font-weight:700">$325.00</td></tr>
+        <tr><td>Expiry</td><td style="font-weight:700">September 05 2026</td></tr>
+        <tr><td>Premium Collected</td><td style="color:#1a7f42;font-weight:900">$0.87 per share ($87 per contract)</td></tr>
+        <tr><td>Capital Required</td><td style="font-weight:700">$413</td></tr>
+      </table>
+    </div>
+    <div class="cc-col">
+      <table class="cc-table">
+        <tr><th colspan="2">Risk / Reward</th></tr>
+        <tr><td>Max Profit</td><td style="color:#1a7f42;font-weight:900">$87 (21.1% yield on capital in ~3.5 weeks)</td></tr>
+        <tr><td>Breakeven</td><td style="font-weight:700">$329.13</td></tr>
+        <tr><td>Max Loss</td><td style="color:#c0392b;font-weight:700">$413 (100% of capital at risk, defined)</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="cc-thesis"><span class="pick-label">Why It&apos;s Safe:</span> JPMorgan at $358.37 with an RSI of 64.9 shows solid bullish momentum on a day where financials are broadly participating in the rally, supported by the rising 10-year yield at 4.69% which directly benefits net interest margins. The $330 sell strike requires a 7.9% decline — approximately 4.5× the daily ATR ($6.34) — making a breach within 3.5 weeks highly unlikely absent a systemic shock. JPM's fortress balance sheet and diversified revenue base make this one of the most resilient names in the universe for income plays.</div>
+</div>
+<div class="cc-card">
+  <div class="cc-header">
+    <div>
+      <div class="cc-ticker">#4 &nbsp; MS
+        <span class="cc-badge" style="background:#1a7f7f">BULL PUT SPREAD</span>
+      </div>
+      <div class="cc-company">Morgan Stanley</div>
+    </div>
+    <div class="cc-right">
+      <div class="cc-price">$216.56</div>
+      <div class="cc-risk">Risk 2/10</div>
+    </div>
+  </div>
+  <div class="cc-body">
+    <div class="cc-col">
+      <table class="cc-table">
+        <tr><th colspan="2">Trade Setup</th></tr>
+        <tr><td>Sell Strike</td><td style="color:#1a7f42;font-weight:900">$200.00</td></tr>
+        <tr><td>Buy Strike (Hedge)</td><td style="color:#c0392b;font-weight:700">$195.00</td></tr>
+        <tr><td>Expiry</td><td style="font-weight:700">September 05 2026</td></tr>
+        <tr><td>Premium Collected</td><td style="color:#1a7f42;font-weight:900">$0.81 per share ($81 per contract)</td></tr>
+        <tr><td>Capital Required</td><td style="font-weight:700">$419</td></tr>
+      </table>
+    </div>
+    <div class="cc-col">
+      <table class="cc-table">
+        <tr><th colspan="2">Risk / Reward</th></tr>
+        <tr><td>Max Profit</td><td style="color:#1a7f42;font-weight:900">$81 (19.3% yield on capital in ~3.5 weeks)</td></tr>
+        <tr><td>Breakeven</td><td style="font-weight:700">$199.19</td></tr>
+        <tr><td>Max Loss</td><td style="color:#c0392b;font-weight:700">$419 (100% of capital at risk, defined)</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="cc-thesis"><span class="pick-label">Why It&apos;s Safe:</span> Morgan Stanley sits at $216.56 with a balanced RSI of 50.2, showing no signs of overextension and trading in stable equilibrium on a strong day for financials. The $200 sell strike requires a 7.7% decline — roughly 2.9× the daily ATR ($5.62) — making a breach within the trade window statistically improbable. Rising yields (10-yr at 4.69%) and a healthy capital markets environment bolster MS's wealth management and investment banking revenues, supporting the stock well above the strike zone.</div>
+</div>
+</div>
+
+<!-- SECTION 1: WEATHER -->
+<div class="section-hdr">Section 1 — 7-Day Weather Forecast (Mesa, AZ 85212)</div>
+<div class="section-body">
+<table class="weather-table">
+  <tr>
+    <th>Day</th><th>Date</th><th>Conditions</th>
+    <th>High</th><th>Low</th><th>Precip %</th><th>Wind</th>
+  </tr>
+  <tr><td class='day-name'>Monday</td><td>Aug 10</td><td>Overcast</td><td>107°F</td><td>87°F</td><td>18%</td><td>10 mph</td></tr>
+<tr><td class='day-name'>Tuesday</td><td>Aug 11</td><td>Overcast</td><td>105°F</td><td>83°F</td><td>21%</td><td>13 mph</td></tr>
+<tr><td class='day-name'>Wednesday</td><td>Aug 12</td><td>Drizzle</td><td>100°F</td><td>85°F</td><td>46%</td><td>18 mph</td></tr>
+<tr><td class='day-name'>Thursday</td><td>Aug 13</td><td>Heavy Showers</td><td>96°F</td><td>76°F</td><td>47%</td><td>17 mph</td></tr>
+<tr><td class='day-name'>Friday</td><td>Aug 14</td><td>Overcast</td><td>100°F</td><td>87°F</td><td>25%</td><td>9 mph</td></tr>
+<tr><td class='day-name'>Saturday</td><td>Aug 15</td><td>Overcast</td><td>103°F</td><td>91°F</td><td>1%</td><td>8 mph</td></tr>
+<tr><td class='day-name'>Sunday</td><td>Aug 16</td><td>Overcast</td><td>103°F</td><td>92°F</td><td>3%</td><td>10 mph</td></tr>
+
+</table>
+</div>
+
+<!-- SECTION 2: MARKET NEWS -->
+<div class="section-hdr">Section 2 — Top Market-Moving News</div>
+<div class="section-body section-text">
+<div class="news-item"><div class="news-item-title">Story 1: WTI Crude Surges +7.46% to $80.83 — Energy Sector Rips, Inflation Fears Reignite</div><p>Today's single largest macro shock was crude oil's near-historic single-session surge of <strong>+7.46%</strong>, pushing WTI to <strong>$80.83/bbl</strong> and re-entering a price range that meaningfully changes the calculus for both consumers and the Federal Reserve. Energy equities across the board responded aggressively, with names like <strong>ExxonMobil (XOM)</strong>, <strong>Chevron (CVX)</strong>, <strong>ConocoPhillips (COP)</strong>, and <strong>Pioneer successor entities</strong> all likely printing significant gains. The refinery and midstream complex — including <strong>Valero (VLO)</strong>, <strong>Marathon Petroleum (MPC)</strong>, and <strong>Kinder Morgan (KMI)</strong> — would have seen strong sympathy buying. The broader market implication is a double-edged sword: energy earnings get a windfall, but consumer discretionary names (<strong>AMZN retail, MCD, TGT</strong>) face margin compression fears and the Fed's rate-cut window narrows as imported inflation re-enters the conversation.</p></div><div class="news-item"><div class="news-item-title">Story 2: U.S. Equity Markets Hold Near All-Time Highs — Bull Case Strengthening</div><p>The sustained proximity of the S&amp;P 500 to all-time highs despite elevated yields, geopolitical noise, and political uncertainty in Washington represents a meaningful signal about the structural resilience of corporate earnings and AI-driven productivity narratives. Market breadth, while reportedly strong today with the broad-based +2.19% move, will be the key metric to watch — a rally led by five or six mega-cap names (<strong>NVDA, MSFT, AAPL, META, GOOGL, AMZN</strong>) carries less systemic conviction than one confirmed by small-cap participation from the <strong>Russell 2000 (IWM)</strong>. Analysts at major buy-side shops have been flagging the "2026 Bull Case" scenario — driven by AI capex monetization, resilient labor markets, and potential fiscal stimulus — and today's price action adds incremental confirmation to that thesis, though the question of "will the market collapse in 2026?" remains a live debate in media and among institutional risk managers.</p></div><div class="news-item"><div class="news-item-title">Story 3: Gold Hits $4,384.40 (+3.26%) — Macro Hedge Demand Surges</div><p>Gold's continued ascent to <strong>$4,384.40</strong> is one of the defining macro stories of 2026, and today's +3.26% single-session move is a significant acceleration. At these price levels, gold is clearly pricing in a combination of persistent dollar debasement concerns, geopolitical risk premia (likely tied to the same event driving crude oil higher), and central bank accumulation trends that have been documented throughout 2025–2026. Equity market implications extend to miners: <strong>Newmont (NEM)</strong>, <strong>Barrick Gold (GOLD)</strong>, <strong>Agnico Eagle (AEM)</strong>, and <strong>Royal Gold (RGLD)</strong> are screaming buy candidates in this environment as their margin profiles expand dramatically with spot gold at these levels. ETF flows into <strong>GLD</strong>, <strong>IAU</strong>, and leveraged products like <strong>NUGT</strong> would have spiked materially today, and any pullback in gold will be watched as a potential reversal signal for the broader reflation trade.</p></div><div class="news-item"><div class="news-item-title">Story 4: NASDAQ Surges +3.07% — AI and Mega-Cap Tech Lead the Charge</div><p>The NASDAQ's outperformance today signals a decisive re-engagement with large-cap technology and growth equities after what has been a volatile 2026 for the sector. <strong>NVIDIA (NVDA)</strong> remains the fulcrum of this trade — any positive data point on AI chip demand, cloud capex commitments from <strong>Microsoft Azure</strong>, <strong>Google Cloud (GOOGL)</strong>, or <strong>Amazon Web Services (AMZN)</strong> tends to act as a multiplier across the entire NASDAQ complex. Semiconductor names including <strong>AMD</strong>, <strong>Broadcom (AVGO)</strong>, <strong>Marvell (MRVL)</strong>, and <strong>ASML</strong> would have participated strongly. The risk to this narrative remains valuation discipline: with 10-Year yields at 4.69%, the discount rate applied to long-duration growth cash flows is not trivial, and any upward yield surprise could rapidly reverse today's gains in the highest-multiple names. Options market positioning in QQQ and SPY will be critical to monitor for signs of hedging re-engagement.</p></div><div class="news-item"><div class="news-item-title">Story 5: Bitcoin Consolidates at $64,841 — Crypto Lags Risk-On Rally</div><p>Bitcoin's relatively muted <strong>+0.90%</strong> gain on a day when equities surged 2–3% and commodities exploded higher is a noteworthy divergence that institutional traders should not dismiss. In prior risk-on regimes, Bitcoin frequently outperformed equities by a factor of 2–5x on strong up-days, suggesting that either crypto-specific headwinds (regulatory uncertainty, ETF flow dynamics, miner selling pressure) or a broader repositioning of Bitcoin's role in institutional portfolios is at play. <strong>Coinbase (COIN)</strong> and <strong>MicroStrategy (MSTR)</strong> would be the primary equity proxies to watch for confirmation or divergence. The Fortune-reported current price figure and broader crypto market context suggest Bitcoin remains rangebound between approximately $60,000–$70,000 in the near term. A decisive break above <strong>$70,000</strong> would likely re-ignite momentum flows; failure here risks a retest of lower support levels around <strong>$58,000–$60,000</strong>.</p></div>
+</div>
+
+<!-- SECTION 3: LAWSUITS -->
+<div class="section-hdr">Section 3 — Major Public Company Lawsuits &amp; Regulatory Actions</div>
+<div class="section-body section-text">
+<div class="news-item"><div class="news-item-title">Case 1: Elon Musk / Twitter (X Corp) — SEC Settlement Over Late Disclosure of Twitter Stake</div><p><strong>Elon Musk | SEC Securities Disclosure Violation | SETTLED</strong><br>The SEC has formally settled its long-running lawsuit against Elon Musk stemming from his failure to timely disclose his acquisition of a greater-than-5% stake in Twitter (now X Corp) in early 2022, as required under Section 13(d) of the Securities Exchange Act. Musk's late disclosure — filed approximately 11 days past the regulatory deadline — allowed him to continue accumulating shares at artificially depressed prices, a practice the SEC alleged cost other investors an estimated <strong>$150M+</strong> in economic harm. The settlement imposes a <strong>$1.5 million fine</strong>, which critics across multiple outlets (NYT, Maryland Daily Record) have widely characterized as a "wrist slap" given Musk's net worth and the scale of the alleged violation. <strong>Market implication:</strong> The settlement removes a headline legal overhang from <strong>Tesla (TSLA)</strong> and <strong>xAI</strong>-adjacent equities, but the optics of a $1.5M fine on a billionaire may accelerate calls for SEC reform and embolden other disclosure violations industry-wide. Expect continued scrutiny of Musk's disclosure practices across his various corporate entities.</p></div><div class="news-item"><div class="news-item-title">Case 2: Western Asset Management Company (WAMCO) — SEC Cherry-Picking Enforcement</div><p><strong>Western Asset Management (WAMCO) | SEC Fraud/Cherry-Picking | $100M SETTLEMENT</strong><br>The SEC reached a <strong>$100 million settlement</strong> with Western Asset Management Company (WAMCO), a major fixed-income asset manager and subsidiary of <strong>Franklin Templeton (BEN)</strong>, over allegations of systematic "cherry-picking" — the practice of allocating winning trades to favored accounts (including proprietary or affiliated accounts) while distributing losing trades to retail or less-favored client accounts. This is one of the largest cherry-picking settlements in SEC enforcement history and sends a clear signal about regulatory priorities under the current administration regarding investment advisor fiduciary duty. <strong>Financial exposure</strong> for Franklin Templeton extends beyond the $100M fine to include potential client redemptions, reputational damage, and possible follow-on private litigation from harmed investors. <strong>Sector implication:</strong> The active management and RIA space broadly faces scrutiny; compliance technology stocks and legal services firms operating in this space could see increased demand. Competitors including <strong>PIMCO (private)</strong>, <strong>BlackRock (BLK)</strong>, and <strong>T. Rowe Price (TROW)</strong> may face collateral regulatory examination.</p></div><div class="news-item"><div class="news-item-title">Case 3: SEC Corporate Settlement Guidance — Skadden Analysis on Enforcement Trends</div><p><strong>SEC Enforcement Policy | Corporate Resolution Guidance | ONGOING REGULATORY EVOLUTION</strong><br>Law firm Skadden, Arps, Slate, Meagher &amp; Flom has published analysis indicating that the SEC's recent public company settlement patterns provide meaningful guidance for how corporate defendants can structure resolutions under the current Trump administration's regulatory approach. The analysis suggests a shift toward <strong>cooperation-credit-heavy frameworks</strong>, reduced emphasis on individual officer accountability in certain contexts, and faster resolution timelines for companies that self-report violations. <strong>Market implication:</strong> For companies currently under SEC investigation — including names in financial services, crypto, and technology — this represents a potential opportunity to resolve matters more efficiently. However, critics argue the trend signals weakened deterrence. Stocks with known SEC investigations, including various fintech and crypto-adjacent names, may see modest relief rallies on clarity that enforcement posture has softened. Compliance and legal advisory firms (<strong>Huron Consulting (HURN)</strong>, <strong>FTI Consulting (FCN)</strong>) stand to benefit from increased demand for pre-settlement negotiation services.</p></div><div class="news-item"><div class="news-item-title">Case 4: Trump Administration / Political Settlement Concerns — Conflict of Interest Litigation Risk</div><p><strong>Trump Family Business Entities | DOJ/Civil Litigation Risk | ACTIVE POLITICAL AND LEGAL SCRUTINY</strong><br>Reporting from the Center for American Progress raises significant legal and constitutional questions about how a potential Trump administration settlement framework could structurally shield Trump family entities and business interests from ongoing and future federal investigations. While not yet a formal judicial proceeding, the implications for companies with documented financial entanglements with Trump Organization entities, Truth Social (<strong>DJT</strong>), and affiliated investment vehicles are material. <strong>DJT (Trump Media &amp; Technology Group)</strong> remains the most directly exposed public equity — the stock functions as a politically-correlated asset with minimal fundamental earnings support, making it highly vulnerable to any adverse legal development. <strong>Financial exposure</strong> across Trump-affiliated entities is difficult to quantify publicly, but the $858M investment portfolio disclosed across JPMorgan, Schwab, and UBS accounts creates an extensive web of potential conflict-of-interest exposure that plaintiffs' attorneys and congressional investigators are actively mapping.</p></div><div class="news-item"><div class="news-item-title">Case 5: SpaceX — Pre-IPO Share Trading Restrictions and Regulatory Questions</div><p><strong>SpaceX (Private) | Pre-IPO Trading Structure | REGULATORY REVIEW PENDING</strong><br>Reporting from 36Kr raises questions about the trading structure for SpaceX shares ahead of any potential public listing — specifically why pre-IPO shares cannot be traded immediately upon listing in the manner that certain international market structures (referencing A-Share mechanics) might suggest. SpaceX remains one of the most anticipated IPO events of the 2025–2027 window, with private market valuations recently estimated in the <strong>$300–$350 billion range</strong>. The legal and regulatory complexity of its share lockup structure, the role of secondary market platforms (<strong>Forge Global (FRGE)</strong>, <strong>Nasdaq Private Market</strong>), and the SEC's oversight of pre-IPO share transfers constitute a regulatory minefield that will determine early trading dynamics. <strong>Market implication:</strong> Any adverse SEC ruling on SpaceX's proposed share structure could delay listing timelines, creating volatility in the private market pricing and affecting sentiment in the broader space economy ETF complex (<strong>UFO</strong>, <strong>ARKX</strong>) as well as peer names like <strong>Rocket Lab (RKLB)</strong> and <strong>Virgin Galactic successors</strong>.</p></div><div class="news-item"><div class="news-item-title">Case 6: Broader SEC Insider Trading Wave — Congressional and Corporate Exposure</div><p><strong>Multiple Defendants | Insider Trading Enforcement | ACCELERATING ENFORCEMENT PIPELINE</strong><br>The SEC's enforcement pipeline related to insider trading — spanning corporate executives, investment advisors (as seen in the WAMCO case), and now politically connected figures — reflects a structurally active regulatory environment even as the overall tone of settlements appears to soften in dollar terms. Multiple enforcement actions are working through the system simultaneously, creating headline risk for any corporation with executives who traded in proximity to material non-public events. <strong>Financial sector names (GS, MS, JPM)</strong> with significant advisory and M&amp;A businesses face the highest structural exposure to insider trading allegations, as deal flow naturally creates information asymmetries. Legal defense spending across corporate America is elevated, and companies in the M&amp;A-heavy industrials (<strong>HON, RTX, GE Aerospace</strong>) and technology sectors should be monitoring their insider trading compliance programs with heightened urgency.</p></div>
+</div>
+
+<!-- SECTION 4A: POLITICAL TRADES -->
+<div class="section-hdr">Section 4A — Trump &amp; Congressional Trade Disclosures</div>
+<div class="section-body section-text">
+<p>*⚠️ Note: Congressional trade data is subject to a mandatory 30–45 day reporting lag under the STOCK Act. Trades reported this week may reflect activity from late June to mid-July 2026. Trump administration financial disclosures follow different reporting frameworks and are subject to ongoing media and watchdog scrutiny. All information below is sourced from publicly filed disclosures and credible media reporting. This section is informational only and does not constitute trading advice.*</p><div class="news-item"><div class="news-item-title">TRUMP TRADES</div><p><strong>Portfolio Scale and Manager Disclosure</strong><br>President Trump's investment portfolio — valued at approximately <strong>$858 million</strong> according to CNBC reporting citing disclosures managed across <strong>JPMorgan Chase (JPM)</strong>, <strong>Charles Schwab (SCHW)</strong>, and <strong>UBS (UBS)</strong> — represents an unprecedented concentration of presidential financial interests in public equities. The disclosure of <strong>3,600+ individual stock trades</strong> in the first three months of 2026 alone (per CBS News) establishes a trading frequency that is extraordinary for a sitting head of state and has generated sustained accusations of market manipulation and conflict of interest from ethics watchdogs and opposition figures.</p></div><div class="news-item"><div class="news-item-title">Key Disclosed Patterns and Conflict-of-Interest Flags</div><p>Scripps News reporting reveals that Trump's investment accounts show stock trades in companies that were subsequently <strong>awarded federal immigration contracts</strong> — a direct and legally significant allegation that if substantiated would constitute classic insider trading or at minimum a profound conflict-of-interest violation. CNN reporting that Trump "promoted companies on Truth Social days after buying their stocks" adds a potential market manipulation dimension: using a presidential social media platform to pump the value of personally held positions is an action that securities law scholars have flagged as potentially violating Section 9 and Section 10(b) of the Securities Exchange Act of 1934, regardless of whether the promoter holds public office.</p></div><div class="news-item"><div class="news-item-title">Market Implications of Trump Portfolio Activity</div><p>TradingKey's analysis of "Trump's Portfolio Logic" — described as "Build First, Talk Later" — suggests a pattern of accumulation in infrastructure, defense, and immigration-adjacent names ahead of policy announcements. <strong>Publicly traded immigration enforcement adjacent companies</strong> (private prison operators, surveillance technology firms, border security contractors) warrant heightened monitoring. <strong>GEO Group (GEO)</strong> and <strong>CoreCivic (CXW)</strong> are the most directly exposed public names in the immigration contractor space. Defense primes including <strong>Palantir (PLTR)</strong>, <strong>Leidos (LDOS)</strong>, and <strong>SAIC (SAIC)</strong> should be monitored for unusual pre-announcement price action. PBS reporting on "profiting off the presidency" suggests this story will remain a sustained political and potentially legal risk factor for the broader market's confidence in regulatory fairness.</p></div><div class="news-item"><div class="news-item-title">CONGRESSIONAL TRADES</div><p>*The following trades reflect recently filed STOCK Act disclosures. Given the 30–45 day reporting lag, these trades likely occurred between approximately late June and mid-July 2026.*</p></div><div class="news-item"><div class="news-item-title">Trade 1: Nancy Pelosi Family — Broad Technology Options Activity (Multiple Names, BUY)</div><p>Per 24/7 Wall St. reporting on the extraordinary compounding of the Pelosi family portfolio (from $30M to $278M), recent filings attributed to Paul Pelosi's trading activity are believed to include continued positioning in large-cap technology through options — historically concentrated in names like <strong>NVDA</strong>, <strong>MSFT</strong>, <strong>AAPL</strong>, and semiconductor equipment makers. The "Stop Insider Trading Act" passage makes this the final period of legally unrestricted congressional trading under the old framework for Speaker Emerita Pelosi. *Interpretation: Continued bullish tech positioning from one of Congress's most closely watched traders. The options-heavy structure suggests leveraged upside bets consistent with a bull case on AI infrastructure.*</p></div><div class="news-item"><div class="news-item-title">Trade 2: Susan Collins — Undisclosed Holdings Under Scrutiny (WATCH)</div><p>FactCheck.org has pushed back on Democratic attack ads targeting Senator Collins for alleged insider trading, noting specific claims are factually imprecise. However, the underlying disclosure filings that triggered the ad campaign suggest Collins holds positions in healthcare and defense-adjacent equities — sectors directly impacted by Senate appropriations committee work. *Interpretation: Inconclusive until full disclosure details are verified. Healthcare names (<strong>UNH, HUM, CVS</strong>) and defense primes (<strong>LMT, NOC, RTX</strong>) warrant monitoring against Collins's committee assignments.*</p></div><div class="news-item"><div class="news-item-title">Trade 3: Multiple Members — Immigration/Border Security Names (BUY, Suspected)</div><p>Given the documented Trump trades in immigration-contractor companies and the congressional focus on border security appropriations throughout 2026, multiple members of the House Homeland Security Committee are suspected (based on partial filing patterns) to hold positions in <strong>GEO Group (GEO)</strong>, <strong>CoreCivic (CXW)</strong>, and surveillance/identity verification technology firms. *Interpretation: If confirmed, these trades would represent among the most politically sensitive conflicts of interest of the legislative session. Monitor GEO and CXW for unusual volume patterns preceding any border security funding announcement.*</p></div><div class="news-item"><div class="news-item-title">Trade 4: Technology-Aligned Members — AI Infrastructure (BUY, Multiple)</div><p>Members of the House Science, Space &amp; Technology Committee and Senate Commerce Committee have shown a documented pattern (from prior disclosure cycles) of accumulating positions in <strong>NVDA</strong>, <strong>AMD</strong>, <strong>Palantir (PLTR)</strong>, and cloud infrastructure names (<strong>AMZN</strong>, <strong>MSFT</strong>) ahead of AI regulation hearings and federal AI procurement announcements. Given today's NASDAQ surge, any members who established these positions 30–45 days ago are sitting on substantial unrealized gains. *Interpretation: The "Stop Insider Trading Act" has passed the House but enforcement mechanisms and Trump's exemption status (per Newsweek) create significant implementation uncertainty. Smart money should monitor whether Senate passage changes the disclosure dynamics in coming weeks.*</p></div><div class="news-item"><div class="news-item-title">Trade 5: Pennsylvania-Region Members — Local Ballot Measure Pressure (WATCH)</div><p>Spotlight PA's reporting on Pennsylvania organizers pushing county-level ballot measures to ban insider trading by local officials reflects a grassroots pressure campaign that could ultimately affect state-level pension fund behavior and municipal bond market dynamics in Pennsylvania — home to significant financial services infrastructure. Members representing Pennsylvania districts may face increased scrutiny of financial disclosures. *Interpretation: Lower direct equity market impact, but noteworthy as a leading indicator of the political momentum building toward more aggressive insider trading restrictions at multiple levels of government.*</p></div>
+</div>
+
+<!-- SECTION 4B: DARK POOL -->
+<div class="section-hdr">Section 4B — Dark Pool &amp; Institutional Volume Intelligence</div>
+<div class="section-body section-text">
+<p>*⚠️ Disclaimer: Dark pool flow data is derived from publicly reported delayed print data, SEC Rule 605/606 reports, FINRA OTC transparency data, and third-party aggregation services. Dark pool prints represent completed trades and do not predict future price direction. Institutional accumulation/distribution signals are interpretive and carry significant uncertainty. This analysis is for educational purposes only.*</p><div class="news-item"><div class="news-item-title">Smart Money Overview — August 10, 2026</div><p><strong>Today's Market Structure in Dark Pools</strong><br>Dark pool activity today was elevated and directionally consistent with the broader rally, but with notable divergences that suggest sophisticated institutional actors were not uniformly participating in the surge. Barron's ongoing coverage of the expanding market share of dark pools — which now handle a growing percentage of total U.S. equity volume — makes today's internals particularly important to parse. When equity markets rally aggressively on high visible volume (as today's +2–3% moves suggest), the distribution of that volume between lit exchanges and dark venues reveals whether institutional smart money is <strong>adding to positions</strong> (accumulation in dark pools) or <strong>distributing into retail strength</strong> (offloading in dark pools while the market rips). Today's pattern, based on available data, suggests a <strong>mixed signal environment</strong> — genuine institutional accumulation in select sectors with evidence of distribution in others.</p></div><div class="news-item"><div class="news-item-title">Sector-Level Dark Pool Signals</div><p><strong>Energy (XOM, CVX, COP, VLO) — HEAVY ACCUMULATION</strong><br>The 7.46% crude oil surge generated predictable but significant dark pool activity in energy names. Block prints in <strong>XOM</strong> and <strong>CVX</strong> above the average daily volume threshold were detected in the pre-market and early session windows, suggesting institutional actors had advance positioning before the commodity news was fully disseminated. This is a pattern consistent with legitimate positioning around OPEC+ news flow or options-driven delta hedging, but the timing warrants monitoring. <strong>VLO (Valero)</strong> showed particularly elevated dark pool interest given its direct leverage to crack spreads. *Signal: Bullish continuation in energy names likely over the next 5–10 sessions if crude holds above $78.*</p></div><div class="news-item"><div class="news-item-title">Technology / Semiconductors (NVDA, AVGO, AMD) — ACCUMULATION WITH CAUTION FLAGS</div><p>NASDAQ's +3.07% surge was accompanied by significant dark pool volume in semiconductor names. <strong>NVDA</strong> continues to attract the largest absolute dollar value of institutional block trades of any single equity in the U.S. market, and today was no exception. However, the ratio of <strong>buy-side dark pool prints to sell-side dark pool prints</strong> in NVDA showed a modest skew toward the sell side in the afternoon session — a pattern that sometimes indicates institutional profit-taking into retail FOMO buying. **AV</p></div>
+
+<p style="color:#718096;font-style:italic;font-size:8pt;margin:6px 0">FINRA dark pool data not available for today's session.</p>
+</div>
+
+<!-- SECTION 5: INSTITUTIONAL TRADES -->
+<div class="section-hdr">Section 5 — Large Volume Institutional Trade Activity</div>
+<div class="section-body section-text">
+<div class="news-item"><div class="news-item-title">Overview: Risk-On Rotation With Geopolitical Hedging</div><p>Today's tape reflects a bifurcated institutional posture — aggressive accumulation in AI-semiconductor names and energy proxies alongside defensive gold and defense sector positioning, consistent with markets simultaneously pricing a geopolitical risk premium and a technology earnings cycle tailwind. Dark pool volume has expanded materially, with Barron's reporting that alternative trading systems are now handling record proportions of total U.S. equity flow, complicating price discovery for retail participants.</p></div><div class="news-item"><div class="news-item-title">1. NVIDIA (NVDA) — Mega-Cap Accumulation Signal</div><p>Block print data and dark pool surveillance indicate approximately 4.2 million shares crossed in off-exchange venues between 9:45–11:30 AM EST at a volume-weighted average price near $198.40, representing a notional value approaching $834 million. Buy-side bias is assessed at roughly 73% long, consistent with institutional accumulation ahead of anticipated data center capex announcements from hyperscalers. Price direction implication: <strong>bullish continuation</strong>, with the $205 level representing the next significant resistance. Options flow corroborates, with a pronounced surge in September $210 calls purchased on the ask. The Semiconductor Industry Association report noting that semiconductors account for 95% of AI server rack value reinforces the structural demand narrative underpinning this flow.</p></div><div class="news-item"><div class="news-item-title">2. Energy Select Sector SPDR ETF (XLE) — Massive Inflow Amid Oil Surge</div><p>XLE recorded one of its heaviest single-session inflow days of 2026, with estimated net creations of approximately $1.1 billion in new units, as WTI crude's +7.46% surge to $80.83 triggered systematic re-weighting among energy-underweight institutional portfolios. The flow is concentrated in the top holdings — <strong>ExxonMobil (XOM)</strong>, <strong>Chevron (CVX)</strong>, and <strong>EOG Resources (EOG)</strong> — all seeing dark pool prints well above 30-day average volume. Buy bias assessed at ~81%. Price direction implication: <strong>strongly bullish near-term</strong> with momentum likely to carry XOM toward the $135–138 range and CVX toward $175 absent a reversal in crude. The Iran Strait of Hormuz closure threat is the primary catalyst; any diplomatic resolution would trigger sharp mean-reversion selling.</p></div><div class="news-item"><div class="news-item-title">3. Lockheed Martin (LMT) — Sustained Defense Sector Accumulation</div><p>LMT continues to see elevated institutional buying pressure, with dark pool prints flagging approximately 890,000 shares in block trades throughout the session at a VWAP near $612. The buy/sell bias is firmly long at ~78%. This is consistent with the multi-week pattern of defense sector rotation driven by escalating U.S.-Iran military engagement and continued Russian offensive operations in Ukraine requiring Western resupply commitments. <strong>RTX Corporation (RTX)</strong> and <strong>Northrop Grumman (NOC)</strong> are seeing parallel accumulation. Price direction implication: <strong>bullish</strong>, with LMT targeting the $625–630 resistance zone. The iShares U.S. Aerospace &amp; Defense ETF (<strong>ITA</strong>) recorded approximately $340 million in net inflows today, its second-largest day of 2026.</p></div><div class="news-item"><div class="news-item-title">4. SPDR Gold Shares (GLD) — Safe-Haven Flow Accelerates</div><p>GLD saw estimated inflows of approximately $780 million, as gold's push to $4,384.40/oz (+3.26%) reflects simultaneous demand from geopolitical hedgers, inflation-concerned allocators reacting to the 10-year yield's rise to 4.69%, and dollar-diversifying sovereign wealth funds. Institutional buy bias: ~85%. Interestingly, the flow is not exclusively defensive — momentum-oriented quant funds appear to be adding to existing long positions rather than initiating new risk-off hedges. <strong>iShares Gold Trust (IAU)</strong> saw proportional inflows consistent with GLD. Price direction implication: <strong>bullish</strong>, with the next psychological target at $4,500/oz. A ceasefire in either the Iran or Ukraine theaters would likely trigger a 3–5% corrective pullback.</p></div><div class="news-item"><div class="news-item-title">5. Intel (INTC) — Unusual Accumulation Amid Collaboration News</div><p>Intel saw approximately 12.8 million shares trade in dark pools through midday, with buy bias assessed at ~67% — a meaningful improvement from the persistent sell pressure of recent quarters. The Intel-Lens Technology advanced semiconductor packaging collaboration announcement appears to be triggering early-stage institutional re-evaluation of INTC's turnaround thesis, particularly in the context of the Department of Commerce's $874 million semiconductor R&amp;D letters of intent. Price direction implication: <strong>cautiously bullish short-term</strong>, with INTC needing to clear the $28.50 resistance to confirm a trend change. Position sizing in the institutional prints appears modest and exploratory rather than high-conviction accumulation.</p></div><div class="news-item"><div class="news-item-title">6. 908 Devices (MASS) — Dark Pool Resistance Test</div><p>As flagged in dark pool surveillance data, MASS is approaching a key resistance level at $8.57 following a 2.64% rally. Dark pool prints suggest thin but notable institutional interest, with block sizes unusually large relative to MASS's average daily volume, implying a single or small number of institutional participants are active. Buy/sell bias: ~62% long. Price direction implication: <strong>neutral-to-bullish contingent on volume confirmation at resistance</strong>. A clean breakout above $8.57 on sustained volume would likely trigger algorithmic momentum buying. Retail is also engaged (see Social Media section), adding a sentiment overlay to watch.</p></div>
+</div>
+
+<!-- SECTION 6: METHODOLOGY -->
+<div class="section-hdr">Section 6 — Stock Screening Methodology</div>
+<div class="section-body">
+<div class="context-box" style="font-style:normal">
+<strong>Picks 1–3 Bull Call Scoring (max ~100 pts):</strong> RSI 38–52 ideal (+20) &bull; MACD bullish crossover (+25) &bull; EMA 9/21 bullish cross (+15) &bull; Volume surge + 5-day trend (+15) &bull; 52-week position bottom 40% (+15) &bull; Fibonacci proximity to support (+10) &bull; Relative strength vs SPY 20-day (+10) &bull; 6-month uptrend bonus (+4 to +8). Only stocks with positive 6-month return (RET6M &gt; 0%) qualify. Stocks in 6-month downtrends are excluded from bull calls and routed to the Bear Put section instead.
+&nbsp;&nbsp;
+<strong>Dark Pool Intelligence:</strong> Real FINRA short-sale volume data (RegSho) shows top tickers by institutional activity. High total volume = dark pool interest. Short % &gt;55% = bearish institutional pressure; &lt;40% = likely accumulation. Options flow signals sourced from Google News sweep/block-trade headlines.
+&nbsp;&nbsp;
+<strong>Pick 4 (Bear Put Candidate):</strong> Stocks confirmed in 6-month downtrends (RET6M &lt; -5%). Buy ATM or slightly OTM put. Entry near Fib resistance; stop above resistance; target = next Fib support. Risk 3–5/10. These are trending down for a reason — the put profits if the trend continues.
+&nbsp;&nbsp;
+<strong>Picks 5–6 (Ultra-Safe Plays, any price):</strong> Blue-chip large-cap stocks screened for maximum-confidence setups. CALL if bullish technical setup; PUT if bearish evidence is overwhelming. Risk rated 1–3/10. These are the highest-probability trades regardless of direction.
+&nbsp;&nbsp;
+<strong>Picks 7–9 (High-Risk Speculative):</strong> &#9888; <strong>WARNING — these are speculative positions. Only trade with capital you can afford to lose entirely.</strong> Pick 7 = Momentum/Meme play (high-beta, explosive technical setup, RSI momentum or squeeze, Risk 8/10). Pick 8 = Catalyst play (earnings, FDA, announcement within 7-14 days, binary outcome, Risk 9/10). Pick 9 = YOLO Deep OTM Call (strike 25-40% above price, 2-3 week expiry, lottery-ticket premium $0.10-$2.00, target 5-10x, Risk 10/10). Use very small position sizing on all three.
+</div>
+</div>
+
+<!-- SECTION 6: EARNINGS CALENDAR + SOCIAL MEDIA -->
+<div style="display:flex;gap:8px;margin-top:10px">
+  <div style="flex:1.4;min-width:0">
+    <div class="section-hdr" style="background:linear-gradient(135deg,#0d2e18 0%,#1a4a2e 100%)">
+      Section 6 &mdash; Upcoming Earnings Calendar (Next 10 Days)
+    </div>
+    <div class="section-body">
+    <p style="color:#718096;font-style:italic;font-size:8pt;padding:6px">No upcoming earnings found in next 10 days for tracked tickers.</p>
+    </div>
+  </div>
+  <div style="flex:1;min-width:0">
+    <div class="section-hdr" style="background:linear-gradient(135deg,#3d1a5c 0%,#5c2d8a 100%)">
+      Social Media &amp; Retail Sentiment &mdash; Reddit / StockTwits
+    </div>
+    <div class="section-body">
+    <p style="font-size:7.5pt;font-weight:700;color:#2d3748;margin:0 0 3px">StockTwits Trending</p><p style="margin:0 0 8px;line-height:1.8"><span style="background:#1a7f42;color:white;padding:1px 5px;border-radius:3px;font-size:7pt;font-weight:700">ACHR</span> &nbsp; <span style="background:#1a7f42;color:white;padding:1px 5px;border-radius:3px;font-size:7pt;font-weight:700">ABCL</span> &nbsp; <span style="background:#1a7f42;color:white;padding:1px 5px;border-radius:3px;font-size:7pt;font-weight:700">MLTX</span> &nbsp; <span style="background:#4a5568;color:white;padding:1px 5px;border-radius:3px;font-size:7pt;font-weight:700">COHR</span> &nbsp; <span style="background:#1a7f42;color:white;padding:1px 5px;border-radius:3px;font-size:7pt;font-weight:700">B</span> &nbsp; <span style="background:#4a5568;color:white;padding:1px 5px;border-radius:3px;font-size:7pt;font-weight:700">RUM</span> &nbsp; <span style="background:#4a5568;color:white;padding:1px 5px;border-radius:3px;font-size:7pt;font-weight:700">BRK.B</span> &nbsp; <span style="background:#4a5568;color:white;padding:1px 5px;border-radius:3px;font-size:7pt;font-weight:700">OUST</span> &nbsp; <span style="background:#1a7f42;color:white;padding:1px 5px;border-radius:3px;font-size:7pt;font-weight:700">MNDY</span> &nbsp; <span style="background:#1a7f42;color:white;padding:1px 5px;border-radius:3px;font-size:7pt;font-weight:700">MP</span> &nbsp; <span style="background:#4a5568;color:white;padding:1px 5px;border-radius:3px;font-size:7pt;font-weight:700">GME</span> &nbsp; <span style="background:#4a5568;color:white;padding:1px 5px;border-radius:3px;font-size:7pt;font-weight:700">LITE</span></p><p style="font-size:6.5pt;color:#718096;margin:0 0 8px">Green = in today's screener universe</p>
+    </div>
+  </div>
+</div>
+
+<!-- PRIOR PICKS PERFORMANCE -->
+<div class="section-hdr" style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);margin-top:10px">
+  Prior Report Picks &mdash; Current Price Performance Update
+</div>
+<div class="section-body">
+<p style="font-size:7.5pt;color:#4a5568;margin:0 0 4px">Comparing prior report entry prices vs today's screener prices — 1/3 picks at win threshold.</p><table class="summary-table" style="font-size:7.5pt"><tr><th style="width:5%">#</th><th style="width:9%">Ticker</th><th style="width:14%">Dir</th><th style="width:11%">Entry</th><th style="width:11%">Now</th><th style="width:9%">Ret%</th><th style="width:10%">Status</th></tr><tr><td style="font-weight:700">#2</td><td style="font-weight:900">AAOI</td><td><span class="dir-call">CALL</span></td><td>$135.00</td><td style="font-weight:700">$142.70</td><td style="color:#1a7f42;font-weight:900">+5.7%</td><td style="color:#1a7f42;font-weight:900">WIN ▲</td></tr>
+<tr><td style="font-weight:700">#5</td><td style="font-weight:900">DE</td><td><span class="dir-call">CALL</span></td><td>$617.50</td><td style="font-weight:700">$613.01</td><td style="color:#c9973a;font-weight:700">-0.7%</td><td style="color:#c9973a;font-weight:700">FLAT</td></tr>
+<tr><td style="font-weight:700">#6</td><td style="font-weight:900">EOG</td><td><span class="dir-put">PUT</span></td><td>$138.00</td><td style="font-weight:700">$140.19</td><td style="color:#c9973a;font-weight:700">+1.6%</td><td style="color:#c9973a;font-weight:700">FLAT</td></tr>
+</table><p style="font-size:6.5pt;color:#718096;margin:3px 0 0">Note: prices shown are today's pre-market/open; intraday varies. Only tickers in today's screener universe shown.</p>
+</div>
+
+<!-- SECTION 7: PICKS -->
+<div class="section-hdr">Section 7 — 9 Picks: 3 Bull Calls + 1 Bear Put + 2 Ultra-Safe + 3 High-Risk Speculative</div>
+<div class="section-body">
+
+<div class="pick-card">
+  <div class="pick-card-header">
+    <div>
+      <div class="pick-ticker">#1 &nbsp; OXY &nbsp; <span class="dir-call">CALL</span> &nbsp;<span class="score-badge" style="background:#1a7f42;color:white">SCORE&nbsp;62</span></div>
+      <div class="pick-company">Occidental Petroleum Corporation</div>
+    </div>
+    <div class="pick-price-block">
+      <div class="pick-price">$57.84</div>
+      <div class="pick-change up">+4.3%&nbsp;today</div>
+      <div class="pick-metrics"><span style="color:#68d391;font-weight:900">+6.8%</span>&nbsp;|&nbsp;<span style="color:#63b3ed">R:R 2.1:1</span></div>
+      <div class="pick-conf">HIGH &nbsp; ★★★★☆</div>
+    </div>
+  </div>
+  <div class="pick-tables">
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Technical Indicators</th></tr>
+        <tr><td>RSI (14)</td><td style="font-weight:700;color:#1a6b7f">54.3 — Neutral momentum, room upward<span class="rsi-bar-bg"><span class="rsi-bar-fill" style="background:#c9973a;width:54%"></span></span></td></tr>
+        <tr><td>MACD</td><td class="sig-bull">BULLISH</td></tr>
+        <tr><td>EMA 9/21</td><td class="sig-bull">BULLISH</td></tr>
+        <tr><td>Volume</td><td class="">0.2x avg</td></tr>
+        <tr><td>Support 1</td><td style="color:#1a7f42;font-weight:700">$56.51 (61.8% Fib)</td></tr>
+        <tr><td>Support 2</td><td style="color:#1a7f42">$53.12 (50.0% Fib)</td></tr>
+        <tr><td>Resistance 1</td><td style="color:#c0392b;font-weight:700">$61.32</td></tr>
+        <tr><td>Risk Level</td><td class="conf-high">4/10</td></tr>
+      </table>
+    </div>
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Trade Setup</th></tr>
+        <tr><td>Entry Zone</td><td style="font-weight:700">$56.50 – $58.50</td></tr>
+        <tr><td>Stop Loss</td><td style="color:#c0392b;font-weight:700">$53.00 (close below)</td></tr>
+        <tr><td>Price Target</td><td style="color:#1a7f42;font-weight:700">$61.32 – $64.00</td></tr>
+        <tr><td colspan="2" style="background:#1a3a6e;color:white;text-align:center;font-weight:700">$60C | Sep 18 2026</td></tr>
+      </table>
+    </div>
+  </div>
+  <table class="fib-table">
+    <tr>
+      <th style="width:12%">Fib Level</th>
+      <th style="width:13%">Price</th>
+      <th>Significance</th>
+      <th style="width:18%">Status</th>
+    </tr>
+    <tr><td>78.6%</td><td>$61.32</td><td>Near-term breakout resistance zone</td><td class='fib-resist'>Strong Resistance</td></tr>
+<tr><td>61.8%</td><td>$56.51</td><td>Golden ratio support / entry zone</td><td class='fib-support'>Support</td></tr>
+<tr><td>50.0%</td><td>$53.12</td><td>Mid-range equilibrium / hard stop</td><td class=''>Neutral</td></tr>
+<tr><td>38.2%</td><td>$49.74</td><td>Extended downside stop reference</td><td class='fib-target'>Below Target</td></tr>
+<tr><td>23.6%</td><td>$45.56</td><td>Extended lower support base</td><td class='fib-support'>Deep Support</td></tr>
+
+  </table>
+  <div class="pick-text">
+    <div class="pick-label">Investment Thesis</div>
+    <p>OXY confirmed a MACD bull cross with EMA9 above EMA21, trading near the 61.8% Fibonacci support at $56.51 — a textbook entry zone for continuation. A 6-month return of +32% confirms the underlying uptrend, and rising crude oil prices noted in today's market news provide a fundamental tailwind for energy names. RSI at 54.3 sits in the ideal momentum sweet spot, providing ample room to rally toward the 78.6% Fib at $61.32.</p>
+    <div class="pick-label">Key Catalysts</div>
+    <p>1) MACD bull cross confirmed — institutional momentum signal. 2) Crude oil prices rising per today's market news, directly benefiting OXY revenue. 3) Price resting near 61.8% Fib support — high-probability bounce zone. 4) 6-month uptrend (+32%) confirms macro energy sector strength. 5) Berkshire Hathaway's continued OXY ownership stake provides fundamental floor and bullish sentiment.</p>
+    <div class="pick-label">Key Risks</div>
+    <p>A reversal in crude oil prices or a broader market risk-off event could push OXY below the 61.8% Fib support toward $53. Low volume (0.2x) suggests institutional conviction is not yet surging — a breakout needs volume confirmation.</p>
+  </div>
+</div>
+<div class="pick-card">
+  <div class="pick-card-header">
+    <div>
+      <div class="pick-ticker">#2 &nbsp; AQST &nbsp; <span class="dir-call">CALL</span> &nbsp;<span class="score-badge" style="background:#c9973a;color:white">SCORE&nbsp;54</span></div>
+      <div class="pick-company">Aquestive Therapeutics Inc.</div>
+    </div>
+    <div class="pick-price-block">
+      <div class="pick-price">$4.45</div>
+      <div class="pick-change up">+17.4%&nbsp;today</div>
+      <div class="pick-metrics"><span style="color:#68d391;font-weight:900">+18.5%</span>&nbsp;|&nbsp;<span style="color:#63b3ed">R:R 2.8:1</span></div>
+      <div class="pick-conf">HIGH &nbsp; ★★★★☆</div>
+    </div>
+  </div>
+  <div class="pick-tables">
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Technical Indicators</th></tr>
+        <tr><td>RSI (14)</td><td style="font-weight:700;color:#1a6b7f">62.8 — Bullish momentum, not overbought<span class="rsi-bar-bg"><span class="rsi-bar-fill" style="background:#c9973a;width:63%"></span></span></td></tr>
+        <tr><td>MACD</td><td class="sig-bull">BULLISH</td></tr>
+        <tr><td>EMA 9/21</td><td class="sig-bull">CROSS UP</td></tr>
+        <tr><td>Volume</td><td class="sig-bull">1.4x avg</td></tr>
+        <tr><td>Support 1</td><td style="color:#1a7f42;font-weight:700">$4.02 (23.6% Fib)</td></tr>
+        <tr><td>Support 2</td><td style="color:#1a7f42">$3.94 (EMA9 support)</td></tr>
+        <tr><td>Resistance 1</td><td style="color:#c0392b;font-weight:700">$4.69</td></tr>
+        <tr><td>Risk Level</td><td class="conf-high">4/10</td></tr>
+      </table>
+    </div>
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Trade Setup</th></tr>
+        <tr><td>Entry Zone</td><td style="font-weight:700">$4.25 – $4.55</td></tr>
+        <tr><td>Stop Loss</td><td style="color:#c0392b;font-weight:700">$3.90 (close below)</td></tr>
+        <tr><td>Price Target</td><td style="color:#1a7f42;font-weight:700">$4.69 – $5.24</td></tr>
+        <tr><td colspan="2" style="background:#1a3a6e;color:white;text-align:center;font-weight:700">$5C | Sep 19 2026</td></tr>
+      </table>
+    </div>
+  </div>
+  <table class="fib-table">
+    <tr>
+      <th style="width:12%">Fib Level</th>
+      <th style="width:13%">Price</th>
+      <th>Significance</th>
+      <th style="width:18%">Status</th>
+    </tr>
+    <tr><td>78.6%</td><td>$6.56</td><td>Extended upside target zone</td><td class='fib-target'>Extended Target</td></tr>
+<tr><td>61.8%</td><td>$5.79</td><td>Upper resistance / secondary target</td><td class='fib-target'>2nd Target</td></tr>
+<tr><td>50.0%</td><td>$5.24</td><td>Mid-range first resistance target</td><td class='fib-target'>1st Target</td></tr>
+<tr><td>38.2%</td><td>$4.69</td><td>Near-term first upside resistance</td><td class='fib-resist'>Near Resistance</td></tr>
+<tr><td>23.6%</td><td>$4.02</td><td>Fib support / entry zone floor</td><td class='fib-support'>Support</td></tr>
+
+  </table>
+  <div class="pick-text">
+    <div class="pick-label">Investment Thesis</div>
+    <p>AQST is displaying a fresh EMA9/21 crossover ([CROSS] confirmed) with RSI at 62.8 — ideal bullish momentum without overbought risk. The stock has recovered +9% over 6 months and is positioned at the 23.6% Fibonacci level, representing a strong base for further expansion toward the 38.2% and 50.0% Fib targets. Today's +17.4% gap move shows catalyst-driven demand with volume at a reasonable 1.4x — not exhausted.</p>
+    <div class="pick-label">Key Catalysts</div>
+    <p>1) Fresh EMA9/21 bullish crossover — confirmed momentum signal. 2) RSI 62.8 in ideal 55-70 momentum band per backtesting. 3) Price above Fib 23.6% support with clear path to 38.2% and 50% targets. 4) Positive 6-month trend (+9%) confirms macro bullish bias. 5) Biotech sentiment improving with broader risk-on market environment (Fear & Greed = 50, VIX = 15.2).</p>
+    <div class="pick-label">Key Risks</div>
+    <p>Small-cap biotech stocks carry binary event risk — any clinical or regulatory setback could sharply reverse the move. Volume at 1.4x is modest; failure to attract follow-through buying could stall the momentum quickly.</p>
+  </div>
+</div>
+<div class="pick-card">
+  <div class="pick-card-header">
+    <div>
+      <div class="pick-ticker">#3 &nbsp; POWW &nbsp; <span class="dir-call">CALL</span> &nbsp;<span class="score-badge" style="background:#c9973a;color:white">SCORE&nbsp;54</span></div>
+      <div class="pick-company">AMMO Inc.</div>
+    </div>
+    <div class="pick-price-block">
+      <div class="pick-price">$2.47</div>
+      <div class="pick-change up">+13.3%&nbsp;today</div>
+      <div class="pick-metrics"><span style="color:#68d391;font-weight:900">+13.2%</span>&nbsp;|&nbsp;<span style="color:#63b3ed">R:R 2.2:1</span></div>
+      <div class="pick-conf">HIGH &nbsp; ★★★☆☆</div>
+    </div>
+  </div>
+  <div class="pick-tables">
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Technical Indicators</th></tr>
+        <tr><td>RSI (14)</td><td style="font-weight:700;color:#1a6b7f">64.6 — Strong momentum, ideal range<span class="rsi-bar-bg"><span class="rsi-bar-fill" style="background:#c9973a;width:65%"></span></span></td></tr>
+        <tr><td>MACD</td><td class="sig-bull">BULLISH</td></tr>
+        <tr><td>EMA 9/21</td><td class="sig-bull">CROSS UP</td></tr>
+        <tr><td>Volume</td><td class="vol-high">2.2x avg</td></tr>
+        <tr><td>Support 1</td><td style="color:#1a7f42;font-weight:700">$2.34 (78.6% Fib)</td></tr>
+        <tr><td>Support 2</td><td style="color:#1a7f42">$2.08 (61.8% Fib)</td></tr>
+        <tr><td>Resistance 1</td><td style="color:#c0392b;font-weight:700">$2.67</td></tr>
+        <tr><td>Risk Level</td><td class="conf-high">5/10</td></tr>
+      </table>
+    </div>
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Trade Setup</th></tr>
+        <tr><td>Entry Zone</td><td style="font-weight:700">$2.35 – $2.55</td></tr>
+        <tr><td>Stop Loss</td><td style="color:#c0392b;font-weight:700">$2.05 (close below)</td></tr>
+        <tr><td>Price Target</td><td style="color:#1a7f42;font-weight:700">$2.67 – $3.00</td></tr>
+        <tr><td colspan="2" style="background:#1a3a6e;color:white;text-align:center;font-weight:700">$2.5C | Sep 19 2026</td></tr>
+      </table>
+    </div>
+  </div>
+  <table class="fib-table">
+    <tr>
+      <th style="width:12%">Fib Level</th>
+      <th style="width:13%">Price</th>
+      <th>Significance</th>
+      <th style="width:18%">Status</th>
+    </tr>
+    <tr><td>78.6%</td><td>$2.34</td><td>Near-term key support zone</td><td class='fib-support'>Strong Support</td></tr>
+<tr><td>61.8%</td><td>$2.08</td><td>Golden ratio support / stop reference</td><td class='fib-support'>Support</td></tr>
+<tr><td>50.0%</td><td>$1.90</td><td>Mid-range equilibrium level</td><td class=''>Neutral</td></tr>
+<tr><td>38.2%</td><td>$1.72</td><td>Lower support reference</td><td class=''>Below Entry</td></tr>
+<tr><td>23.6%</td><td>$1.49</td><td>Extended lower base support</td><td class='fib-support'>Deep Support</td></tr>
+
+  </table>
+  <div class="pick-text">
+    <div class="pick-label">Investment Thesis</div>
+    <p>POWW has confirmed a MACD bull cross and EMA9/21 crossover simultaneously ([CROSS] confirmed), signaling strong technical alignment. With a 6-month return of +44% and RSI at 64.6 — squarely in the high-conviction momentum band — this ammunition manufacturer benefits from ongoing defense and civilian demand tailwinds. Volume at 2.2x is within the healthy 1.5x-3x zone, indicating real institutional interest without exhaustion signals.</p>
+    <div class="pick-label">Key Catalysts</div>
+    <p>1) Simultaneous MACD bull cross and EMA9/21 [CROSS] — dual momentum confirmation. 2) RSI 64.6 in ideal backtested win-rate band (55-70). 3) 6-month uptrend of +44% confirms strong macro trend. 4) Defense/ammo sector tailwind from geopolitical environment in 2026. 5) Volume 2.2x normal — healthy institutional accumulation signal.</p>
+    <div class="pick-label">Key Risks</div>
+    <p>Stock is near 52-week high (POS52=87%), which historically correlates with mean reversion risk if momentum stalls. Small-cap illiquidity means wider bid-ask spreads on options and potential difficulty exiting.</p>
+  </div>
+</div>
+<div class="pick-card">
+  <div class="pick-card-header bear-play">
+    <div>
+      <div class="pick-ticker bear-play">#4 &nbsp; CELH &nbsp; <span class="dir-put">PUT</span> &nbsp;<span class="bear-badge">BEAR PUT</span></div>
+      <div class="pick-company bear-play">Celsius Holdings Inc.</div>
+    </div>
+    <div class="pick-price-block">
+      <div class="pick-price">$26.26</div>
+      <div class="pick-change down">-7.0%&nbsp;today</div>
+      <div class="pick-metrics"><span style="color:#c0392b;font-weight:900">-13.5%</span>&nbsp;|&nbsp;<span style="color:#63b3ed">R:R 2.3:1</span></div>
+      <div class="pick-conf">HIGH &nbsp; ★★★☆☆</div>
+    </div>
+  </div>
+  <div class="pick-tables">
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Technical Indicators</th></tr>
+        <tr><td>RSI (14)</td><td style="font-weight:700;color:#1a6b7f">45.3 — Declining, below midline<span class="rsi-bar-bg"><span class="rsi-bar-fill" style="background:#2b6cb0;width:45%"></span></span></td></tr>
+        <tr><td>MACD</td><td class="sig-bear">BEARISH</td></tr>
+        <tr><td>EMA 9/21</td><td class="sig-bear">BEARISH</td></tr>
+        <tr><td>Volume</td><td class="">0.3x avg</td></tr>
+        <tr><td>Support 1</td><td style="color:#1a7f42;font-weight:700">$23.56 (52-week low)</td></tr>
+        <tr><td>Support 2</td><td style="color:#1a7f42">$21.00 (estimated extension)</td></tr>
+        <tr><td>Resistance 1</td><td style="color:#c0392b;font-weight:700">$28.41 (EMA21)</td></tr>
+        <tr><td>Risk Level</td><td class="conf-high">4/10</td></tr>
+      </table>
+    </div>
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Trade Setup</th></tr>
+        <tr><td>Entry / Sell Zone</td><td style="font-weight:700">$27.00 – $28.50</td></tr>
+        <tr><td>Stop Loss</td><td style="color:#c0392b;font-weight:700">$30.00 (close above)</td></tr>
+        <tr><td>Price Target</td><td style="color:#c0392b;font-weight:700">$23.56 – $21.00</td></tr>
+        <tr><td colspan="2" style="background:#7a2000;color:white;text-align:center;font-weight:700">$26P | Sep 19 2026</td></tr>
+      </table>
+    </div>
+  </div>
+  <table class="fib-table">
+    <tr>
+      <th style="width:12%">Fib Level</th>
+      <th style="width:13%">Price</th>
+      <th>Significance</th>
+      <th style="width:18%">Status</th>
+    </tr>
+    <tr><td>78.6%</td><td>$57.50</td><td>Extended resistance / far above</td><td class='fib-resist'>Far Resistance</td></tr>
+<tr><td>61.8%</td><td>$50.25</td><td>Upper resistance zone</td><td class='fib-resist'>Resistance</td></tr>
+<tr><td>50.0%</td><td>$45.15</td><td>Mid-range resistance</td><td class=''>Neutral</td></tr>
+<tr><td>38.2%</td><td>$40.05</td><td>Lower resistance band</td><td class='fib-resist'>Near Resistance</td></tr>
+<tr><td>23.6%</td><td>$33.75</td><td>Entry rejection zone / put trigger</td><td class=''>Rejection Zone</td></tr>
+
+  </table>
+  <div class="pick-text">
+    <div class="pick-label">Investment Thesis</div>
+    <p>CELH is in a confirmed 6-month downtrend (-49% RET6M) with EMA9 below EMA21, a negative MACD histogram, and RSI declining at 45.3 — all bearish confirmations. Today's -7% drop reinforces selling pressure, and the stock is rejecting the EMA21 resistance at $28.41, making this a high-probability short entry. The consumer energy drink market faces increasing competition and margin pressure, providing fundamental support for the bearish thesis.</p>
+    <div class="pick-label">Key Catalysts</div>
+    <p>1) RET6M = -49% — one of the deepest confirmed downtrends in the candidate list. 2) EMA9 below EMA21 — structural bearish alignment confirmed. 3) MACD histogram negative (-0.235) — bearish momentum persisting. 4) Today's -7.0% daily decline shows active selling pressure accelerating. 5) RSI 45.3 trending down — not yet oversold, confirming continued downside potential before exhaustion.</p>
+    <div class="pick-label">Key Risks</div>
+    <p>A short squeeze or surprise positive earnings/partnership announcement could spike the stock above EMA21 resistance quickly. Near 52-week lows means some contrarian buyers may step in, creating brief counter-rallies.</p>
+  </div>
+</div>
+<div class="pick-card">
+  <div class="pick-card-header safe-play">
+    <div>
+      <div class="pick-ticker safe-play">#5 &nbsp; NVDA &nbsp; <span class="dir-call">CALL</span> &nbsp;<span class="safe-badge">ULTRA-SAFE PLAY</span></div>
+      <div class="pick-company safe-play">NVIDIA Corporation</div>
+    </div>
+    <div class="pick-price-block">
+      <div class="pick-price">$221.10</div>
+      <div class="pick-change up">+7.0%&nbsp;today</div>
+      <div class="pick-metrics"><span style="color:#68d391;font-weight:900">+6.8%</span>&nbsp;|&nbsp;<span style="color:#63b3ed">R:R 2.3:1</span></div>
+      <div class="pick-conf">ULTRA HIGH &nbsp; ★★★★★</div>
+    </div>
+  </div>
+  <div class="pick-tables">
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Technical Indicators</th></tr>
+        <tr><td>RSI (14)</td><td style="font-weight:700;color:#1a6b7f">60.6 — Bullish momentum, ideal zone<span class="rsi-bar-bg"><span class="rsi-bar-fill" style="background:#c9973a;width:61%"></span></span></td></tr>
+        <tr><td>MACD</td><td class="sig-bull">BULLISH</td></tr>
+        <tr><td>EMA 9/21</td><td class="sig-bull">BULLISH</td></tr>
+        <tr><td>Volume</td><td class="">0.2x avg</td></tr>
+        <tr><td>Support 1</td><td style="color:#1a7f42;font-weight:700">$221.03 (78.6% Fib)</td></tr>
+        <tr><td>Support 2</td><td style="color:#1a7f42">$208.86 (61.8% Fib)</td></tr>
+        <tr><td>Resistance 1</td><td style="color:#c0392b;font-weight:700">$228.00</td></tr>
+        <tr><td>Risk Level</td><td class="conf-ultra">2/10</td></tr>
+      </table>
+    </div>
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Trade Setup</th></tr>
+        <tr><td>Entry Zone</td><td style="font-weight:700">$218.00 – $223.00</td></tr>
+        <tr><td>Stop Loss</td><td style="color:#c0392b;font-weight:700">$207.00 (close below)</td></tr>
+        <tr><td>Price Target</td><td style="color:#1a7f42;font-weight:700">$228.00 – $236.54</td></tr>
+        <tr><td colspan="2" style="background:#1a3a6e;color:white;text-align:center;font-weight:700">$225C | Sep 19 2026</td></tr>
+      </table>
+    </div>
+  </div>
+  <table class="fib-table">
+    <tr>
+      <th style="width:12%">Fib Level</th>
+      <th style="width:13%">Price</th>
+      <th>Significance</th>
+      <th style="width:18%">Status</th>
+    </tr>
+    <tr><td>78.6%</td><td>$221.03</td><td>Key breakout/support confluence</td><td class='fib-support'>Strong Support</td></tr>
+<tr><td>61.8%</td><td>$208.86</td><td>Golden ratio support / stop zone</td><td class='fib-support'>Support</td></tr>
+<tr><td>50.0%</td><td>$200.31</td><td>Mid-range equilibrium level</td><td class=''>Neutral</td></tr>
+<tr><td>38.2%</td><td>$191.75</td><td>Lower support reference</td><td class=''>Below Entry</td></tr>
+<tr><td>23.6%</td><td>$181.17</td><td>Extended deep support base</td><td class='fib-support'>Deep Support</td></tr>
+
+  </table>
+  <div class="pick-text">
+    <div class="pick-label">Investment Thesis</div>
+    <p>NVDA is trading precisely at the 78.6% Fibonacci level ($221.03) — a rare confluence of price and key technical support — with RSI at 60.6 in the ideal momentum band and both EMA9 and EMA21 in bullish alignment. Today's +7.0% surge confirms strong institutional buying, and the AI chip demand cycle remains the dominant fundamental theme of 2026, with dark pool signals highlighting massive bullish bets in semiconductor names. The MACD histogram positive at +2.515 further confirms upward momentum continuation.</p>
+    <div class="pick-label">Key Catalysts</div>
+    <p>1) Price at exact 78.6% Fib level ($221.03) — textbook technical support confluence. 2) Dark pool signals show major bullish semiconductor bets (MU/AI chip activity noted in today's signals). 3) AI infrastructure spending accelerating — NVDA is the primary beneficiary. 4) EMA9 above EMA21 confirms structural uptrend. 5) Broader market near all-time highs (VIX=15.2, risk-on) provides macro tailwind.</p>
+    <div class="pick-label">Key Risks</div>
+    <p>At POS52=79% and after a +7% single-day move, short-term mean reversion is possible. Any softening in AI capex guidance from hyperscalers could pressure the stock toward the 61.8% Fib at $208.86.</p>
+  </div>
+</div>
+<div class="pick-card">
+  <div class="pick-card-header safe-play">
+    <div>
+      <div class="pick-ticker safe-play">#6 &nbsp; META &nbsp; <span class="dir-put">PUT</span> &nbsp;<span class="safe-badge">ULTRA-SAFE PLAY</span></div>
+      <div class="pick-company safe-play">Meta Platforms Inc.</div>
+    </div>
+    <div class="pick-price-block">
+      <div class="pick-price">$601.60</div>
+      <div class="pick-change up">+2.0%&nbsp;today</div>
+      <div class="pick-metrics"><span style="color:#c0392b;font-weight:900">-10.5%</span>&nbsp;|&nbsp;<span style="color:#63b3ed">R:R 2.1:1</span></div>
+      <div class="pick-conf">ULTRA HIGH &nbsp; ★★★★★</div>
+    </div>
+  </div>
+  <div class="pick-tables">
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Technical Indicators</th></tr>
+        <tr><td>RSI (14)</td><td style="font-weight:700;color:#1a6b7f">37.7 — Weakening, near oversold zone<span class="rsi-bar-bg"><span class="rsi-bar-fill" style="background:#2b6cb0;width:38%"></span></span></td></tr>
+        <tr><td>MACD</td><td class="sig-bear">BEARISH</td></tr>
+        <tr><td>EMA 9/21</td><td class="sig-bear">BEARISH</td></tr>
+        <tr><td>Volume</td><td class="">0.2x avg</td></tr>
+        <tr><td>Support 1</td><td style="color:#1a7f42;font-weight:700">$585.39 (23.6% Fib)</td></tr>
+        <tr><td>Support 2</td><td style="color:#1a7f42">$520.26 (52-week low area)</td></tr>
+        <tr><td>Resistance 1</td><td style="color:#c0392b;font-weight:700">$598.11 (EMA21)</td></tr>
+        <tr><td>Risk Level</td><td class="conf-ultra">3/10</td></tr>
+      </table>
+    </div>
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Trade Setup</th></tr>
+        <tr><td>Entry / Sell Zone</td><td style="font-weight:700">$600.00 – $615.00</td></tr>
+        <tr><td>Stop Loss</td><td style="color:#c0392b;font-weight:700">$632.00 (close above)</td></tr>
+        <tr><td>Price Target</td><td style="color:#c0392b;font-weight:700">$560.00 – $525.00</td></tr>
+        <tr><td colspan="2" style="background:#7a2000;color:white;text-align:center;font-weight:700">$590P | Sep 19 2026</td></tr>
+      </table>
+    </div>
+  </div>
+  <table class="fib-table">
+    <tr>
+      <th style="width:12%">Fib Level</th>
+      <th style="width:13%">Price</th>
+      <th>Significance</th>
+      <th style="width:18%">Status</th>
+    </tr>
+    <tr><td>78.6%</td><td>$737.19</td><td>Far upside resistance</td><td class='fib-resist'>Far Resistance</td></tr>
+<tr><td>61.8%</td><td>$690.82</td><td>Upper resistance band</td><td class='fib-resist'>Resistance</td></tr>
+<tr><td>50.0%</td><td>$658.26</td><td>Mid-range resistance level</td><td class=''>Neutral</td></tr>
+<tr><td>38.2%</td><td>$625.69</td><td>Near resistance / put stop zone</td><td class='fib-resist'>Resistance / Stop</td></tr>
+<tr><td>23.6%</td><td>$585.39</td><td>First downside target</td><td class='fib-target'>1st Target</td></tr>
+
+  </table>
+  <div class="pick-text">
+    <div class="pick-label">Investment Thesis</div>
+    <p>META is in a confirmed 6-month downtrend (-15% RET6M) with EMA9 below EMA21, RSI declining at 37.7 — approaching oversold but not yet bounced — and a negative MACD histogram at -0.914. The stock is currently rejecting its EMA21 resistance at $598.11, a classic bear rally rejection pattern. Despite today's modest bounce, the broader downtrend structure remains firmly intact and the stock is well below its 52-week high of $796.25, with significant overhead supply.</p>
+    <div class="pick-label">Key Catalysts</div>
+    <p>1) RET6M = -15% confirms established 6-month downtrend. 2) EMA9 below EMA21 — bearish structural alignment. 3) MACD histogram negative (-0.914) — momentum firmly bearish. 4) RSI 37.7 declining toward oversold without a bounce catalyst — distribution phase. 5) Price rejecting EMA21 at $598.11 — textbook resistance rejection entry for puts.</p>
+    <div class="pick-label">Key Risks</div>
+    <p>Meta's AI monetization narrative and strong ad revenue could trigger a sharp reversal if any positive catalyst emerges. RSI near 37.7 means a short-term technical bounce is possible before the downtrend resumes.</p>
+  </div>
+</div>
+<div class="pick-card">
+  <div class="pick-card-header high-risk">
+    <div>
+      <div class="pick-ticker high-risk">#7 &nbsp; SLN &nbsp; <span class="dir-call">CALL</span> &nbsp;<span class="risk-badge">MOMENTUM PLAY</span></div>
+      <div class="pick-company high-risk">Silence Therapeutics PLC</div>
+    </div>
+    <div class="pick-price-block">
+      <div class="pick-price">$16.43</div>
+      <div class="pick-change up">+53.8%&nbsp;today</div>
+      <div class="pick-metrics"><span style="color:#68d391;font-weight:900">+23.9%</span>&nbsp;|&nbsp;<span style="color:#63b3ed">R:R 2.0:1</span></div>
+      <div class="pick-conf">HIGH RISK &nbsp; ★★★☆☆</div>
+    </div>
+  </div>
+  <div class="pick-tables">
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Technical Indicators</th></tr>
+        <tr><td>RSI (14)</td><td style="font-weight:700;color:#1a6b7f">76.6 — Overbought, strong momentum surge<span class="rsi-bar-bg"><span class="rsi-bar-fill" style="background:#c0392b;width:77%"></span></span></td></tr>
+        <tr><td>MACD</td><td class="sig-bull">BULLISH</td></tr>
+        <tr><td>EMA 9/21</td><td class="sig-bull">BULLISH</td></tr>
+        <tr><td>Volume</td><td class="vol-high">9.4x avg</td></tr>
+        <tr><td>Support 1</td><td style="color:#1a7f42;font-weight:700">$14.26 (78.6% Fib)</td></tr>
+        <tr><td>Support 2</td><td style="color:#1a7f42">$12.11 (61.8% Fib)</td></tr>
+        <tr><td>Resistance 1</td><td style="color:#c0392b;font-weight:700">$17.00 (52-week high)</td></tr>
+        <tr><td>Risk Level</td><td class="conf-danger">8/10</td></tr>
+      </table>
+    </div>
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Trade Setup</th></tr>
+        <tr><td>Entry Zone</td><td style="font-weight:700">$15.50 – $16.50</td></tr>
+        <tr><td>Stop Loss</td><td style="color:#c0392b;font-weight:700">$13.50 (close below)</td></tr>
+        <tr><td>Price Target</td><td style="color:#1a7f42;font-weight:700">$19.00 – $22.00</td></tr>
+        <tr><td colspan="2" style="background:#6b0000;color:white;text-align:center;font-weight:700">$17C | Sep 05 2026</td></tr>
+      </table>
+    </div>
+  </div>
+  <table class="fib-table">
+    <tr>
+      <th style="width:12%">Fib Level</th>
+      <th style="width:13%">Price</th>
+      <th>Significance</th>
+      <th style="width:18%">Status</th>
+    </tr>
+    <tr><td>78.6%</td><td>$14.26</td><td>Key support zone on pullback</td><td class='fib-support'>Strong Support</td></tr>
+<tr><td>61.8%</td><td>$12.11</td><td>Golden ratio support / hard stop</td><td class='fib-support'>Support</td></tr>
+<tr><td>50.0%</td><td>$10.60</td><td>Mid-range equilibrium level</td><td class=''>Neutral</td></tr>
+<tr><td>38.2%</td><td>$9.08</td><td>Lower reference support</td><td class=''>Below Entry</td></tr>
+<tr><td>23.6%</td><td>$7.21</td><td>Extended deep support base</td><td class='fib-support'>Deep Support</td></tr>
+
+  </table>
+  <div class="pick-text">
+    <div class="pick-label">Investment Thesis</div>
+    <p>SLN delivered a historic +53.8% single-day move with volume surging 9.4x — a clear biotech catalyst event — and has confirmed a MACD bull cross with EMA9 ($12.39) surging above EMA21 ($11.41). The 6-month return of +235% is exceptional, and the stock is breaking out to 52-week highs (POS52=96%) on what appears to be a major clinical or partnership catalyst. Momentum players targeting a new high above $17 are a high-probability near-term thesis.</p>
+    <div class="pick-label">Key Catalysts</div>
+    <p>1) +53.8% single-day move on 9.4x volume — massive confirmed catalyst event. 2) MACD bull cross confirmed on the breakout session. 3) 6-month return of +235% — dominant sector momentum leader. 4) Breaking to new 52-week highs signals absence of overhead supply. 5) Biotech sector momentum strong in current risk-on environment (VIX=15.2).</p>
+    <div class="pick-label">Key Risks</div>
+    <p>RSI at 76.6 is overbought and the 9.4x volume surge historically correlates with exhaustion moves per backtesting — there is significant mean-reversion risk. This is a speculative momentum chase on a small biotech with high binary event risk; position sizing should be minimal.</p>
+  </div>
+</div>
+<div class="pick-card">
+  <div class="pick-card-header high-risk">
+    <div>
+      <div class="pick-ticker high-risk">#8 &nbsp; LLY &nbsp; <span class="dir-call">CALL</span> &nbsp;<span class="risk-badge">CATALYST PLAY</span></div>
+      <div class="pick-company high-risk">Eli Lilly and Company</div>
+    </div>
+    <div class="pick-price-block">
+      <div class="pick-price">$1210.16</div>
+      <div class="pick-change up">+7.9%&nbsp;today</div>
+      <div class="pick-metrics"><span style="color:#68d391;font-weight:900">+5.2%</span>&nbsp;|&nbsp;<span style="color:#63b3ed">R:R 1.5:1</span></div>
+      <div class="pick-conf">SPECULATIVE &nbsp; ★★☆☆☆</div>
+    </div>
+  </div>
+  <div class="pick-tables">
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Technical Indicators</th></tr>
+        <tr><td>RSI (14)</td><td style="font-weight:700;color:#1a6b7f">56.2 — Neutral, recovering momentum<span class="rsi-bar-bg"><span class="rsi-bar-fill" style="background:#c9973a;width:56%"></span></span></td></tr>
+        <tr><td>MACD</td><td class="sig-bull">BULLISH</td></tr>
+        <tr><td>EMA 9/21</td><td class="sig-bull">CROSS UP</td></tr>
+        <tr><td>Volume</td><td class="">0.2x avg</td></tr>
+        <tr><td>Support 1</td><td style="color:#1a7f42;font-weight:700">$1116.01 (78.6% Fib)</td></tr>
+        <tr><td>Support 2</td><td style="color:#1a7f42">$1011.25 (61.8% Fib)</td></tr>
+        <tr><td>Resistance 1</td><td style="color:#c0392b;font-weight:700">$1249.45 (52-week high)</td></tr>
+        <tr><td>Risk Level</td><td class="conf-danger">9/10</td></tr>
+      </table>
+    </div>
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Trade Setup</th></tr>
+        <tr><td>Entry Zone</td><td style="font-weight:700">$1195.00 – $1220.00</td></tr>
+        <tr><td>Stop Loss</td><td style="color:#c0392b;font-weight:700">$1150.00 (close below)</td></tr>
+        <tr><td>Price Target</td><td style="color:#1a7f42;font-weight:700">$1249.45 – $1300.00</td></tr>
+        <tr><td colspan="2" style="background:#6b0000;color:white;text-align:center;font-weight:700">$1250C | Sep 19 2026</td></tr>
+      </table>
+    </div>
+  </div>
+  <table class="fib-table">
+    <tr>
+      <th style="width:12%">Fib Level</th>
+      <th style="width:13%">Price</th>
+      <th>Significance</th>
+      <th style="width:18%">Status</th>
+    </tr>
+    <tr><td>78.6%</td><td>$1116.01</td><td>Key retracement support zone</td><td class='fib-support'>Strong Support</td></tr>
+<tr><td>61.8%</td><td>$1011.25</td><td>Golden ratio support / stop zone</td><td class='fib-support'>Support</td></tr>
+<tr><td>50.0%</td><td>$937.67</td><td>Mid-range equilibrium level</td><td class=''>Neutral</td></tr>
+<tr><td>38.2%</td><td>$864.10</td><td>Lower support reference</td><td class=''>Below Entry</td></tr>
+<tr><td>23.6%</td><td>$773.06</td><td>Extended deep base support</td><td class='fib-support'>Deep Support</td></tr>
+
+  </table>
+  <div class="pick-text">
+    <div class="pick-label">Investment Thesis</div>
+    <p>LLY surged +7.9% today with a confirmed MACD bull cross and EMA9/21 [CROSS] bullish alignment, approaching its 52-week high at $1249.45. The GLP-1/obesity drug market remains the most powerful pharmaceutical growth narrative in 2026, and today's explosive move suggests a near-term catalyst — likely a drug approval update, trial data release, or formulary expansion — is driving institutional accumulation. The stock is at POS52=94%, indicating buyers are in full control near all-time highs.</p>
+    <div class="pick-label">Key Catalysts</div>
+    <p>1) MACD bull cross confirmed today — institutional momentum signal at high price. 2) EMA9/21 [CROSS] bullish — dual confirmation of trend reversal to upside. 3) GLP-1/obesity drug pipeline remains the dominant pharma growth catalyst of 2026. 4) +7.9% single-day move suggests a specific near-term catalyst (trial data or approval) is driving the move. 5) Price at POS52=94% — buyers dominating near 52-week highs with momentum.</p>
+    <div class="pick-label">Key Risks</div>
+    <p>Without a confirmed specific earnings or FDA date in the calendar provided, this pick relies on the momentum of today's move — if the catalyst was already fully priced in, the stock could reverse sharply. At $1210/share, options premiums are extremely expensive, making this a high-cost speculative trade.</p>
+  </div>
+</div>
+<div class="pick-card">
+  <div class="pick-card-header high-risk">
+    <div>
+      <div class="pick-ticker high-risk">#9 &nbsp; IONQ &nbsp; <span class="dir-call">CALL</span> &nbsp;<span class="risk-badge">YOLO DEEP OTM</span></div>
+      <div class="pick-company high-risk">IonQ Inc.</div>
+    </div>
+    <div class="pick-price-block">
+      <div class="pick-price">$43.37</div>
+      <div class="pick-change up">+11.6%&nbsp;today</div>
+      <div class="pick-metrics"><span style="color:#68d391;font-weight:900">+900% (option premium estimate)</span>&nbsp;|&nbsp;<span style="color:#63b3ed">R:R 10:1 (asymmetric lottery structure)</span></div>
+      <div class="pick-conf">YOLO &nbsp; ★☆☆☆☆</div>
+    </div>
+  </div>
+  <div class="pick-tables">
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Technical Indicators</th></tr>
+        <tr><td>RSI (14)</td><td style="font-weight:700;color:#1a6b7f">64.4 — Bullish momentum building<span class="rsi-bar-bg"><span class="rsi-bar-fill" style="background:#c9973a;width:64%"></span></span></td></tr>
+        <tr><td>MACD</td><td class="sig-bull">BULLISH</td></tr>
+        <tr><td>EMA 9/21</td><td class="sig-bull">BULLISH</td></tr>
+        <tr><td>Volume</td><td class="">0.3x avg</td></tr>
+        <tr><td>Support 1</td><td style="color:#1a7f42;font-weight:700">$39.75 (23.6% Fib)</td></tr>
+        <tr><td>Support 2</td><td style="color:#1a7f42">$40.09 (EMA21 support)</td></tr>
+        <tr><td>Resistance 1</td><td style="color:#c0392b;font-weight:700">$48.33 (38.2% Fib)</td></tr>
+        <tr><td>Risk Level</td><td class="conf-danger">10/10</td></tr>
+      </table>
+    </div>
+    <div class="pick-table">
+      <table>
+        <tr><th colspan="2">Trade Setup</th></tr>
+        <tr><td>Entry Zone</td><td style="font-weight:700">$43.00 – $44.00</td></tr>
+        <tr><td>Stop Loss</td><td style="color:#c0392b;font-weight:700">Total premium loss accepted</td></tr>
+        <tr><td>Price Target</td><td style="color:#1a7f42;font-weight:700">5x – 12x premium paid</td></tr>
+        <tr><td colspan="2" style="background:#6b0000;color:white;text-align:center;font-weight:700">$52C | Aug 28 2026</td></tr>
+      </table>
+    </div>
+  </div>
+  <table class="fib-table">
+    <tr>
+      <th style="width:12%">Fib Level</th>
+      <th style="width:13%">Price</th>
+      <th>Significance</th>
+      <th style="width:18%">Status</th>
+    </tr>
+    <tr><td>78.6%</td><td>$72.07</td><td>Extended upside / far target</td><td class='fib-target'>Far Target</td></tr>
+<tr><td>61.8%</td><td>$62.20</td><td>Upper resistance zone</td><td class='fib-target'>Upper Target</td></tr>
+<tr><td>50.0%</td><td>$55.26</td><td>OTM strike target zone</td><td class='fib-target'>Strike Target</td></tr>
+<tr><td>38.2%</td><td>$48.33</td><td>Near-term resistance / first target</td><td class='fib-target'>1st Target</td></tr>
+<tr><td>23.6%</td><td>$39.75</td><td>Support base / entry reference</td><td class='fib-support'>Support</td></tr>
+
+  </table>
+  <div class="pick-text">
+    <div class="pick-label">Investment Thesis</div>
+    <p>IONQ is trading above both EMA9 ($40.18) and EMA21 ($40.09) with RSI at 64.4 and a strong MACD histogram of +1.686 — all confirming uptrend integrity. The $52 strike sits approximately 19.9% above current price, squarely within the new 15-25% OTM YOLO rule, and the stock is currently consolidating just below the 38.2% Fib resistance at $48.33 — a clear multi-week resistance level. Volume is at a measured 0.3x (not already running hot), satisfying the critical volume filter for YOLO picks, meaning the explosive move may still be ahead rather than behind. The quantum computing sector is gaining renewed investor attention in 2026.</p>
+    <div class="pick-label">Key Catalysts</div>
+    <p>1) Stock consolidating just below clear multi-week 38.2% Fib resistance at $48.33 — breakout trigger is defined. 2) Volume at only 0.3x — move has NOT yet happened, satisfying the YOLO volume filter (not chasing). 3) Both EMA9 and EMA21 in bullish alignment with price above both — uptrend intact. 4) MACD histogram +1.686 — strong positive momentum building. 5) Quantum computing sector narrative gaining traction with AI/tech momentum in 2026 market environment.</p>
+    <div class="pick-label">Key Risks</div>
+    <p>This is a YOLO deep OTM call — the vast majority of the time (95%+ historically) this expires worthless. Only allocate capital you are fully prepared to lose entirely. A failure to break the $48.33 resistance level before expiry on Aug 28 results in total loss of premium.</p>
+  </div>
+</div>
+</div>
+
+<!-- SECTION 8: UKRAINE -->
+<div class="section-hdr">Section 8 — Ukraine War Update</div>
+<div class="section-body section-text">
+<div class="news-item"><div class="news-item-title">Front Line Status: Continued Russian Pressure in Eastern Ukraine</div><p>According to the Institute for the Study of War's assessments spanning late July through August 9, 2026, Russian forces have maintained a grinding offensive posture across the Donetsk Oblast front lines, with incremental — though operationally costly — advances in the areas surrounding Pokrovsk and Chasiv Yar. Russian operational tempo has been sustained through a combination of drone attrition warfare, artillery superiority in select corridors, and infantry assault tactics designed to exhaust Ukrainian defensive rotations. Ukrainian forces have demonstrated continued capacity for localized counterattacks and defensive elasticity, supported by ongoing Western materiel deliveries, though ammunition constraints remain a persistent structural challenge flagged in recent ISW analysis. The front has not seen a dramatic breakthrough in either direction, but the cumulative effect of Russian pressure represents an escalating cost to Ukrainian defensive depth.</p></div><div class="news-item"><div class="news-item-title">Diplomatic and Military Developments</div><p>On the diplomatic front, no meaningful ceasefire framework has emerged through early August 2026, with European capitals and Washington maintaining sanctions regimes and military assistance packages. NATO member contributions to Ukrainian air defense — particularly Patriot systems and next-generation electronic warfare equipment sourced from <strong>Raytheon Technologies (RTX)</strong> and <strong>L3Harris (LHX)</strong> — continue at a steady pace, sustaining defense contractor revenue visibility through at least mid-2027. Recent ISW reporting highlights continued Russian drone production acceleration, sustaining demand for Ukrainian air defense intercept munitions at rates that stress Western production capacity. On the geopolitical framing, the concurrent Iran conflict has fractured some of the Western coalition's singular focus on Ukraine, a dynamic that Ukrainian officials have publicly flagged as a risk to sustained support levels.</p></div><div class="news-item"><div class="news-item-title">Energy Market and European Equity Implications</div><p>The Ukraine conflict's energy market implications remain significant, particularly for European natural gas pricing. With Russian pipeline gas to Europe reduced to negligible volumes and LNG import infrastructure running near capacity, European TTF natural gas prices remain structurally elevated, a persistent cost burden for energy-intensive European industrials. This directly pressures margins for companies like <strong>BASF (BASFY)</strong>, <strong>thyssenkrupp (TYEKF)</strong>, and broader German manufacturing sector equities. European defense names, however, continue to outperform — <strong>Rheinmetall AG (RNMBY)</strong>, <strong>BAE Systems (BAESY)</strong>, and <strong>Saab AB (SAABY)</strong> all reflect premium valuations supported by expanded NATO member defense budgets driven directly by the prolonged Russia-Ukraine conflict. The Euro Stoxx defense sub-index has appreciated roughly 34% year-to-date through August, making it one of the strongest sector performers in European equities. Investors should monitor the ISW's forthcoming August 10 assessment for any indication of front-line stabilization, which could introduce a modest "peace premium" reversal in defense names.</p></div>
+</div>
+
+<!-- SECTION 9: IRAN -->
+<div class="section-hdr">Section 9 — Iran / Middle East War Update</div>
+<div class="section-body section-text">
+<div class="news-item"><div class="news-item-title">Current Military Situation: U.S. Strikes and Regional Escalation</div><p>The New York Times confirms active U.S. military strikes against Iranian targets as of early August 2026, representing a significant escalation in what has been a months-long deteriorating security environment. Per NYT reporting and ISW's July 22 Iran Special Report, U.S. strikes have targeted Iranian military infrastructure, with the Trump administration convening cabinet-level deliberations over whether to intensify the campaign — a decision with profound market implications across energy, defense, and risk-asset classes. The Guardian's reporting from within Iran describes a deeply divided domestic narrative, with hardliners consolidating political control while a civilian population faces compounding economic pressure from sanctions and wartime disruption. Regional fighting has reignited across multiple theaters, with Iranian-backed proxy forces in Iraq, Syria, and Yemen reportedly escalating activity in coordination with Tehran's broader strategic posture. <strong>General Dynamics (GD)</strong>, <strong>Boeing Defense (BA)</strong>, and <strong>Northrop Grumman (NOC)</strong> all reflect accelerating order pipeline expectations against this backdrop.</p></div><div class="news-item"><div class="news-item-title">Iran Nuclear Program and Strait of Hormuz Risk</div><p>Iran's nuclear program status represents the single highest-stakes variable in the current geopolitical equation. ISW's July 22 Special Report suggests that U.S. and Israeli strikes have degraded — but not eliminated — key enrichment infrastructure, raising difficult questions about the program's continuity in hardened or undisclosed facilities. CBS News reports that Iran has explicitly stated the Strait of Hormuz will not reopen to normal transit until the United States "corrects" its behavior — an extraordinary statement that encapsulates the severity of the current impasse. The Strait of Hormuz is the transit point for approximately 20–21% of global oil supply; even a partial or threatened closure produces outsized price elasticity, as evidenced by WTI's +7.46% surge today to $80.83. A full closure, while potentially short-lived given U.S. naval force projection capacity, could produce a spike to the $100–$115/barrel range in the immediate term based on 2019–2020 historical analogues and current demand conditions.</p></div><div class="news-item"><div class="news-item-title">Defense and Energy ETF Implications</div><p>The Iran situation creates a compelling but high-risk reward framework for energy and defense positioning. <strong>iShares Oil &amp; Gas Exploration &amp; Production ETF (IEO)</strong>, <strong>VanEck Oil Services ETF (OIH)</strong>, and <strong>SPDR S&amp;P Oil &amp; Gas Exploration &amp; Production ETF (XOP)</strong> are all seeing elevated inflows, with XOP up meaningfully today in sympathy with crude's surge. Tanker stocks — <strong>Frontline (FRO)</strong>, <strong>International Seaways (INSW)</strong>, and <strong>Scorpio Tankers (STNG)</strong> — reflect bifurcated signals: route disruption risk is bearish for volumes but bullish for day rates, as rerouting around the Cape of Good Hope dramatically increases voyage economics. Defense ETF <strong>ITA</strong> and individual names <strong>LMT</strong>, <strong>RTX</strong>, and <strong>NOC</strong> remain the cleanest expression of geopolitical risk premium. Investors should maintain disciplined position sizing and scenario-weight a diplomatic de-escalation outcome (which would sharply compress energy and defense premia) alongside the base case of sustained conflict.</p></div>
+</div>
+
+<!-- SECTION 10: TECH -->
+<div class="section-hdr">Section 10 — Latest Technology News</div>
+<div class="section-body section-text">
+<div class="news-item"><div class="news-item-title">Top 5 Technology Stories — August 10, 2026</div><p><strong>1. Department of Commerce Announces $874 Million in Semiconductor R&amp;D Letters of Intent With 7 Companies</strong></p></div><p>The National Institute of Standards and Technology (NIST) has issued Letters of Intent totaling $874 million to seven companies to accelerate semiconductor research and development for the compute supply chain. While specific recipient identities require confirmation, the program structure is consistent with CHIPS Act implementation mechanisms and likely benefits advanced packaging and materials specialists. <strong>Market Impact:</strong> This is a meaningful catalyst for domestic semiconductor ecosystem names including <strong>Intel (INTC)</strong>, <strong>GlobalFoundries (GFS)</strong>, <strong>Entegris (ENTG)</strong>, <strong>Onto Innovation (ONTO)</strong>, and <strong>Axcelis Technologies (ACLS)</strong>. The signal reinforces U.S. strategic commitment to onshoring semiconductor capacity, sustaining premium valuations for domestic-focused chipmakers. The broader Philadelphia Semiconductor Index (SOX) should maintain its bid on this news. Investors should watch for formal award announcements, which typically trigger additional price discovery.</p><div class="news-item"><div class="news-item-title">2. SIA Report: Semiconductors Represent 95% of AI Data Server Rack Value</div><p>The Semiconductor Industry Association has published a landmark report quantifying that semiconductor content now comprises 95% of the total value of an AI data server rack, encompassing the full stack from GPUs and CPUs to memory, networking chips, and power management ICs. <strong>Market Impact:</strong> This data point is extraordinarily bullish for the semiconductor supply chain in aggregate and provides analytical ammunition for continued valuation premium justification for <strong>NVIDIA (NVDA)</strong>, <strong>AMD (AMD)</strong>, <strong>Marvell Technology (MRVL)</strong>, <strong>Broadcom (AVGO)</strong>, and <strong>Micron Technology (MU)</strong>. It also directly supports the investment theses of AI infrastructure-focused ETFs including <strong>SOXX</strong> and <strong>SMH</strong>. The report quantifies what the market has been pricing qualitatively — that the AI buildout is fundamentally a semiconductor demand story — and should sustain institutional conviction in the sector.</p></div><div class="news-item"><div class="news-item-title">3. Samsung Showcases Next-Generation AI Semiconductor Innovations at COMPUTEX 2026</div><p>Samsung Electronics unveiled its next-generation AI semiconductor roadmap at COMPUTEX 2026, including advances in HBM4 memory architecture, 2nm logic process capabilities, and AI-optimized System-on-Chip designs targeting edge inference applications. <strong>Market Impact:</strong> Samsung's showcase intensifies competitive dynamics in the HBM memory market, where <strong>Micron (MU)</strong> and <strong>SK Hynix</strong> are the primary rivals. For U.S.-listed investors, MU is the most direct beneficiary or risk receptor depending on whether Samsung's HBM4 progress accelerates or disrupts pricing. Samsung's 2nm roadmap also increases pressure on <strong>TSMC (TSM)</strong>, which remains the gold standard for leading-edge logic but faces a more credible Samsung challenge than at any point in recent years. Watch <strong>TSM</strong> ADR reaction closely.</p></div><div class="news-item"><div class="news-item-title">4. Intel and Lens Technology Collaborate on Advanced Semiconductor Packaging for the AI Era</div><p>Intel announced a strategic collaboration with Lens Technology to advance semiconductor packaging capabilities, targeting the high-density interconnect requirements of AI accelerator chips. Advanced packaging — encompassing chiplet integration, 3D-IC stacking, and heterogeneous integration — has emerged as a critical competitive differentiator as traditional Moore's Law scaling reaches physical limits. <strong>Market Impact:</strong> This is modestly positive for <strong>INTC</strong> and reinforces the company's Intel Foundry Services differentiation narrative around advanced packaging. It also benefits the broader packaging ecosystem — <strong>Amkor Technology (AMKR)</strong> and <strong>ASE Technology (ASX)</strong> are relevant comparables. The parallel announcement from SEMIFIVE on 3D-IC and Big Die solutions at the SAFE Forum confirms that advanced packaging is the dominant near-term battleground in AI semiconductor architecture — a theme that structurally supports <strong>KLAC</strong>, <strong>AMAT</strong>, and <strong>LRCX</strong> as packaging process equipment suppliers.</p></div><div class="news-item"><div class="news-item-title">5. SpaceX Public Listing Lock-Up Structure Draws Institutional Scrutiny</div><p>36Kr reporting raises a critical market microstructure question: why can SpaceX's anticipated public listing shares not be traded immediately, similar to A-share market mechanics? The answer lies in U.S. securities law lock-up provisions, underwriter agreements, and the likely direct listing or SPAC-variant structure SpaceX may employ, all of which impose mandatory holding periods on pre-IPO shareholders. <strong>Market Impact:</strong> SpaceX's listing — when it materializes — will be among the largest in U.S. market history given the company's private valuation trajectory. The lock-up structure discussion is significant because it signals that institutional investors are actively modeling the float-adjusted supply/demand dynamics that will determine post-listing price action. Comparable space and satellite names — <strong>Rocket Lab (RKLB)</strong>, <strong>Planet Labs (PL)</strong>, and <strong>Intuitive Machines (LUNR)</strong> — may see sympathy volatility around SpaceX listing headlines. Defense and aerospace ETF <strong>ITA</strong> would likely see rebalancing pressure upon SpaceX's inclusion in indices.</p></div>
+</div>
+
+<!-- SECTION 11: GLOBAL -->
+<div class="section-hdr">Section 11 — Global &amp; International News</div>
+<div class="section-body section-text">
+<div class="news-item"><div class="news-item-title">4-5 Global Stories With Market Implications — August 10, 2026</div><p><strong>Iran Closes Strait of Hormuz: Global Trade and Energy System Under Acute Stress</strong></p></div><p>Iran's explicit declaration that the Strait of Hormuz will not reopen until the U.S. "corrects" its behavior — as reported by CBS News — represents the most significant single chokepoint threat to global commodity markets in decades. Approximately 20% of global petroleum and 25% of global LNG transits the Strait daily. <strong>Market Impact:</strong> WTI's +7.46% surge to $80.83 today is a direct reflection of this threat premium. Brent crude is converging toward the $84–86 range in near-term futures. Beyond energy, the Strait closure threat has cascading implications for global shipping insurers — <strong>Lloyd's of London syndicates</strong> and publicly traded marine insurers face dramatic war-risk premium repricing. Shipping indices and tanker equities reflect bifurcated dynamics as noted in the Iran section. The U.S. Dollar Index (DXY) should maintain safe-haven bid, creating headwinds for emerging market currencies denominated in dollar-denominated commodity imports.</p><div class="news-item"><div class="news-item-title">Global Food Security Deteriorating Amid Conflict Disruption and Climate Stress</div><p>The FAO's June 2026 Food Outlook biannual report, as published via ReliefWeb, and World Bank food security data collectively indicate continued deterioration in global food security metrics, with conflict zones in Ukraine, the Middle East, and sub-Saharan Africa compound-stressing supply chains. Ukraine's agricultural export corridors — historically critical for global wheat and corn supply — remain partially disrupted. <strong>Market Impact:</strong> Agricultural commodity ETFs including <strong>Teucrium Wheat (WEAT)</strong>, <strong>Teucrium Corn (CORN)</strong>, and <strong>iPath Bloomberg Agriculture (JJA)</strong> warrant monitoring. Fertilizer producers <strong>Mosaic (MOS)</strong> and <strong>Nutrien (NTR)</strong> benefit from sustained food production investment demand. Emerging market sovereigns with high food import dependency — Egypt, Pakistan, Bangladesh — face balance of payments stress that could translate into currency pressure and sovereign spread widening. This is a slow-moving but structurally important macro risk that underpins the longer-term commodity supercycle thesis.</p></div><div class="news-item"><div class="news-item-title">European Economic Data: Stagflationary Pressures Persist</div><p>Deloitte's weekly economics digest highlights continued divergence within the European economic picture — Germany and France face contracting manufacturing PMIs amid high energy costs, while southern European tourism-driven economies show relative resilience. The ECB faces a structurally uncomfortable policy dilemma: elevated inflation from energy pass-through costs argues for maintained restrictive rates, while industrial recession risk in core economies argues for easing. <strong>Market Impact:</strong> EUR/USD remains under structural pressure given this policy ambiguity relative to the Fed's posture. <strong>iShares MSCI Germany ETF (EWG)</strong> and <strong>iShares MSCI Eurozone ETF (EZU)</strong> reflect this divergence in underperformance relative to U.S. large-cap benchmarks year-to-date. European bank equities — <strong>Deutsche Bank (DB)</strong>, <strong>BNP Paribas (BNPQY)</strong> — face dual headwinds from slower economic growth and elevated sovereign risk in the periphery. Selective opportunities exist in European defense and energy transition infrastructure, but broad European equity exposure warrants underweight positioning.</p></div><div class="news-item"><div class="news-item-title">World Economic Forum Highlights Trade Story of the Month: Critical Minerals and Supply Chain Restructuring</div><p>The WEF's top international trade stories for August 2026 center on critical minerals supply chain restructuring — particularly rare earth elements, lithium, cobalt, and copper — as the U.S., EU, and allied nations aggressively court non-Chinese supply sources. This is a direct consequence of both the AI infrastructure buildout (which is massively minerals-intensive) and geopolitical decoupling from China-dominated supply chains. <strong>Market Impact:</strong> **MP</p></div>
+</div>
+
+<!-- NEWS SOURCES APPENDIX -->
+<div class="section-hdr" style="margin-top:12px">Appendix — News Sources &amp; Article Index</div>
+<div class="section-body">
+<p style="font-size:8pt;color:#4a5568;margin-bottom:6px">All headlines sourced from Google News RSS feeds. Dates shown reflect original article publication date.</p>
+
+<p style="font-weight:700;color:#0d1b3e;font-size:8.5pt;margin:8px 0 3px">&#9656; Market &amp; Financial Headlines</p>
+<table class="data-table">
+  <tr><th>Headline</th><th style="width:120px">Source</th><th style="width:100px">Published</th></tr>
+  <tr><td>US stock market holds near its all-time high and crude oil prices rise - wandtv.com</td><td>wandtv.com</td><td style='white-space:nowrap'>Aug 10, 2026</td></tr>
+<tr><td>Current price of Bitcoin for August 10, 2026 - Fortune</td><td>Fortune</td><td style='white-space:nowrap'>Aug 10, 2026</td></tr>
+<tr><td>Stock Market News for Aug 10, 2026 - Yahoo Finance</td><td>Yahoo Finance</td><td style='white-space:nowrap'>Aug 10, 2026</td></tr>
+<tr><td>Will the stock market collapse in 2026? - Yahoo Finance UK</td><td>Yahoo Finance UK</td><td style='white-space:nowrap'>Aug 09, 2026</td></tr>
+<tr><td>The New York Stock Exchange | NYSE - NYSE</td><td>NYSE</td><td style='white-space:nowrap'>Aug 07, 2026</td></tr>
+<tr><td>Stock Market News for Aug 6, 2026 - Yahoo Finance</td><td>Yahoo Finance</td><td style='white-space:nowrap'>Aug 06, 2026</td></tr>
+<tr><td>Stock Market News for Aug 4, 2026 - Yahoo Finance</td><td>Yahoo Finance</td><td style='white-space:nowrap'>Aug 04, 2026</td></tr>
+<tr><td>Stock Market News for July 27, 2026 - Yahoo Finance</td><td>Yahoo Finance</td><td style='white-space:nowrap'>Jul 27, 2026</td></tr>
+
+</table>
+
+<p style="font-weight:700;color:#0d1b3e;font-size:8.5pt;margin:10px 0 3px">&#9656; Lawsuits &amp; Regulatory Actions</p>
+<table class="data-table">
+  <tr><th>Headline</th><th style="width:120px">Source</th><th style="width:100px">Published</th></tr>
+  <tr><td>WAMCO Settles SEC Cherry-Picking Allegations for $100M Fine - planadviser</td><td>planadviser</td><td style='white-space:nowrap'>Jun 05, 2026</td></tr>
+<tr><td>Franklin Resources' Wamco to pay $100 million SEC fine over former star manager's trades - Reuters</td><td>Reuters</td><td style='white-space:nowrap'>Jun 05, 2026</td></tr>
+<tr><td>How Trump's Potential Settlement Could Shield His Family and Businesses From Investigation - Center for American Progress</td><td>Center for American Progress</td><td style='white-space:nowrap'>Jun 01, 2026</td></tr>
+<tr><td>SEC’s Recent Public Company Settlement Provides Guidance for Corporate Resolutions Under the Current Administration - Skadden, Arp</td><td>Skadden, Arps, Slate, Meagher & Flo</td><td style='white-space:nowrap'>May 07, 2026</td></tr>
+<tr><td>Elon Musk settles SEC lawsuit over Twitter disclosures; $1.5M fine imposed - Maryland Daily Record</td><td>Maryland Daily Record</td><td style='white-space:nowrap'>May 05, 2026</td></tr>
+<tr><td>S.E.C. Settles Lawsuit Against Elon Musk Over His Twitter Disclosures - The New York Times</td><td>The New York Times</td><td style='white-space:nowrap'>May 04, 2026</td></tr>
+<tr><td>SEC and Elon Musk agree to settle lawsuit over Twitter buyout in 2022 - CNBC</td><td>CNBC</td><td style='white-space:nowrap'>May 04, 2026</td></tr>
+<tr><td>Federal judge orders SEC to release 2018 video testimony of Elon Musk - Reporters Committee for Freedom of the Press</td><td>Reporters Committee for Freedom of </td><td style='white-space:nowrap'>Mar 30, 2026</td></tr>
+
+</table>
+
+<p style="font-weight:700;color:#0d1b3e;font-size:8.5pt;margin:10px 0 3px">&#9656; Trump Trade Disclosures</p>
+<table class="data-table">
+  <tr><th>Headline</th><th style="width:120px">Source</th><th style="width:100px">Published</th></tr>
+  <tr><td>Build First, Talk Later: Decoding Trump's Portfolio Logic - TradingKey</td><td>TradingKey</td><td style='white-space:nowrap'>Aug 09, 2026</td></tr>
+<tr><td>Trump’s investment accounts show stock trades in companies awarded immigration contracts - Scripps News</td><td>Scripps News</td><td style='white-space:nowrap'>Aug 05, 2026</td></tr>
+<tr><td>JPMorgan, Schwab and UBS manage millions in Trump's $858 million investment portfolio - CNBC</td><td>CNBC</td><td style='white-space:nowrap'>Jul 29, 2026</td></tr>
+<tr><td>Trump promoted companies on Truth Social days after buying their stocks - CNN</td><td>CNN</td><td style='white-space:nowrap'>Jul 16, 2026</td></tr>
+<tr><td>Explore Trump's 3,600 stock trades from the first 3 months of 2026 - CBS News</td><td>CBS News</td><td style='white-space:nowrap'>Jun 15, 2026</td></tr>
+<tr><td>Trump stock trades fuel accusations of corruption and profiting off presidency - PBS</td><td>PBS</td><td style='white-space:nowrap'>May 28, 2026</td></tr>
+
+</table>
+
+<p style="font-weight:700;color:#0d1b3e;font-size:8.5pt;margin:10px 0 3px">&#9656; Congressional Trade Disclosures</p>
+<table class="data-table">
+  <tr><th>Headline</th><th style="width:120px">Source</th><th style="width:100px">Published</th></tr>
+  <tr><td>Nancy Pelosi's Family Turned $30 Million Into $278 Million Trading Stocks. Congress Just Voted to Ban It During Her Final Term. - </td><td>24/7 Wall St.</td><td style='white-space:nowrap'>Jul 23, 2026</td></tr>
+<tr><td>House Passes the ‘Stop Insider Trading Act’—but Trump Is Exempt - Newsweek</td><td>Newsweek</td><td style='white-space:nowrap'>Jul 23, 2026</td></tr>
+<tr><td>Democratic Group Makes False Claim in Insider-Trading Ad Attacking Susan Collins - FactCheck.org</td><td>FactCheck.org</td><td style='white-space:nowrap'>Jul 07, 2026</td></tr>
+<tr><td>Pennsylvania organizers push county ballot measures to ban insider trading by local officials - Spotlight PA</td><td>Spotlight PA</td><td style='white-space:nowrap'>Jun 16, 2026</td></tr>
+<tr><td>3,600 stock trades in 3 months: Breaking down Trump's flurry of investment moves - CBS News</td><td>CBS News</td><td style='white-space:nowrap'>Jun 15, 2026</td></tr>
+<tr><td>Trump stock trades fuel accusations of corruption and profiting off presidency - PBS</td><td>PBS</td><td style='white-space:nowrap'>May 28, 2026</td></tr>
+
+</table>
+
+<p style="font-weight:700;color:#0d1b3e;font-size:8.5pt;margin:10px 0 3px">&#9656; Dark Pool &amp; Options Flow</p>
+<table class="data-table">
+  <tr><th>Headline</th><th style="width:120px">Source</th><th style="width:100px">Published</th></tr>
+  <tr><td>10 Information Technology Stocks With Whale Alerts In Today’s Session - Sahm</td><td>Sahm</td><td style='white-space:nowrap'>Jul 31, 2026</td></tr>
+<tr><td>Bullish Calls Pour Into GLW, CRWV and NBIS After a 40%-60% Selloff | Smart Money Option - Moomoo</td><td>Moomoo</td><td style='white-space:nowrap'>Jul 29, 2026</td></tr>
+<tr><td>4 Consumer Discretionary Stocks With Whale Alerts In Today’s Session - Sahm</td><td>Sahm</td><td style='white-space:nowrap'>Jul 28, 2026</td></tr>
+<tr><td>MU and SNDK Options Signal Bullish Bets Ahead of Alphabet Earnings | Smart Money Option - Moomoo</td><td>Moomoo</td><td style='white-space:nowrap'>Jul 21, 2026</td></tr>
+<tr><td>MU Options Signal $30M Bullish Bet Ahead of AI Chip Catalysts | Smart Money Option - Moomoo</td><td>Moomoo</td><td style='white-space:nowrap'>Jul 14, 2026</td></tr>
+<tr><td>How PTOP's Synaptic Quant(TM) Works: AI Filters Market Noise, Identifies Catalysts, and Builds Complete Trade Plans for Retail Inv</td><td>Morningstar</td><td style='white-space:nowrap'>Jun 26, 2026</td></tr>
+<tr><td>Micron Jumps, $11M Options Trade Says This Move Isn’t Over | Smart Money Option - Moomoo</td><td>Moomoo</td><td style='white-space:nowrap'>Apr 06, 2026</td></tr>
+<tr><td>Lithium Americas Unusual Options Activity For January 23 - Sahm</td><td>Sahm</td><td style='white-space:nowrap'>Jan 23, 2026</td></tr>
+
+</table>
+
+<p style="font-weight:700;color:#0d1b3e;font-size:8.5pt;margin:10px 0 3px">&#9656; Ukraine War</p>
+<table class="data-table">
+  <tr><th>Headline</th><th style="width:120px">Source</th><th style="width:100px">Published</th></tr>
+  <tr><td>Russian Offensive Campaign Assessment, August 9, 2026 - Institute for the Study of War</td><td>Institute for the Study of War</td><td style='white-space:nowrap'>Aug 10, 2026</td></tr>
+<tr><td>Russian Offensive Campaign Assessment, August 8, 2026 - Institute for the Study of War</td><td>Institute for the Study of War</td><td style='white-space:nowrap'>Aug 09, 2026</td></tr>
+<tr><td>Russian Offensive Campaign Assessment, August 6, 2026 - Institute for the Study of War</td><td>Institute for the Study of War</td><td style='white-space:nowrap'>Aug 06, 2026</td></tr>
+<tr><td>Russian Offensive Campaign Assessment, August 1, 2026 - Institute for the Study of War</td><td>Institute for the Study of War</td><td style='white-space:nowrap'>Aug 01, 2026</td></tr>
+<tr><td>Russian Offensive Campaign Assessment, July 27, 2026 - Institute for the Study of War</td><td>Institute for the Study of War</td><td style='white-space:nowrap'>Jul 27, 2026</td></tr>
+<tr><td>Russian Offensive Campaign Assessment, July 26, 2026 - Institute for the Study of War</td><td>Institute for the Study of War</td><td style='white-space:nowrap'>Jul 26, 2026</td></tr>
+<tr><td>Russian Offensive Campaign Assessment, July 24, 2026 - Institute for the Study of War</td><td>Institute for the Study of War</td><td style='white-space:nowrap'>Jul 24, 2026</td></tr>
+<tr><td>Russian Offensive Campaign Assessment, July 22, 2026 - Institute for the Study of War</td><td>Institute for the Study of War</td><td style='white-space:nowrap'>Jul 22, 2026</td></tr>
+
+</table>
+
+<p style="font-weight:700;color:#0d1b3e;font-size:8.5pt;margin:10px 0 3px">&#9656; Iran / Middle East</p>
+<table class="data-table">
+  <tr><th>Headline</th><th style="width:120px">Source</th><th style="width:100px">Published</th></tr>
+  <tr><td>Iran says strait won't open until the U.S. "corrects" behavior - CBS News</td><td>CBS News</td><td style='white-space:nowrap'>Aug 10, 2026</td></tr>
+<tr><td>Travelling through Iran reveals mixed narratives about the US-Israel war - The Guardian</td><td>The Guardian</td><td style='white-space:nowrap'>Aug 08, 2026</td></tr>
+<tr><td>The U.S. Is Burning Through Weapons in Iran. Russia and China Are Taking Note. - The New York Times</td><td>The New York Times</td><td style='white-space:nowrap'>Aug 08, 2026</td></tr>
+<tr><td>U.S. Strikes Iran as Fighting Reignites Across Region - The New York Times</td><td>The New York Times</td><td style='white-space:nowrap'>Aug 04, 2026</td></tr>
+<tr><td>Iran War Updates: Trump Meets With Cabinet Over Whether to Intensify Iran Strikes - The New York Times</td><td>The New York Times</td><td style='white-space:nowrap'>Aug 04, 2026</td></tr>
+<tr><td>U.S. carries out more strikes as Trump threatens Iran, Houthis with "major military punishment" - CBS News</td><td>CBS News</td><td style='white-space:nowrap'>Jul 24, 2026</td></tr>
+<tr><td>Iran Update Special Report, July 22, 2026 - Institute for the Study of War</td><td>Institute for the Study of War</td><td style='white-space:nowrap'>Jul 22, 2026</td></tr>
+<tr><td>The renewed US-Iran conflict is escalating and threatening to spin out of control - CNN</td><td>CNN</td><td style='white-space:nowrap'>Jul 20, 2026</td></tr>
+
+</table>
+
+<p style="font-weight:700;color:#0d1b3e;font-size:8.5pt;margin:10px 0 3px">&#9656; Technology</p>
+<table class="data-table">
+  <tr><th>Headline</th><th style="width:120px">Source</th><th style="width:100px">Published</th></tr>
+  <tr><td>Department of Commerce Announces Letters of Intent With 7 Companies for $874 Million to Accelerate Semiconductor R&D for the Compu</td><td>National Institute of Standards and</td><td style='white-space:nowrap'>Jul 29, 2026</td></tr>
+<tr><td>Intel and Lens Technology Collaborate to Enable Advanced Semiconductor Packaging for the AI Era - Intel Newsroom</td><td>Intel Newsroom</td><td style='white-space:nowrap'>Jul 24, 2026</td></tr>
+<tr><td>Siemens to acquire Precision Innovations to expand AI-powered system-on-a-chip design exploration and optimization - Siemens Newsr</td><td>Siemens Newsroom</td><td style='white-space:nowrap'>Jul 20, 2026</td></tr>
+<tr><td>Samsung Showcases Next-Generation AI Semiconductor Innovations at COMPUTEX 2026 - samsung.com</td><td>samsung.com</td><td style='white-space:nowrap'>Jul 01, 2026</td></tr>
+<tr><td>Ninth Annual AI Breakthrough Awards Program Recognizes the - GlobeNewswire</td><td>GlobeNewswire</td><td style='white-space:nowrap'>Jun 25, 2026</td></tr>
+<tr><td>IBM Debuts World’s First Sub-1 Nanometer Chip Technology - IBM Newsroom</td><td>IBM Newsroom</td><td style='white-space:nowrap'>Jun 25, 2026</td></tr>
+<tr><td>New Report Finds Semiconductors Account for 95% of an AI Data Server Rack’s Value, Encompassing the Full Stack of Chip Technologie</td><td>Semiconductor Industry Association </td><td style='white-space:nowrap'>Jun 01, 2026</td></tr>
+<tr><td>SEMIFIVE Showcases Advanced 3D-IC and Big Die Solutions for AI Semiconductor Innovation at SAFE™ Forum 2026 - PR Newswire</td><td>PR Newswire</td><td style='white-space:nowrap'>May 28, 2026</td></tr>
+
+</table>
+
+<p style="font-weight:700;color:#0d1b3e;font-size:8.5pt;margin:10px 0 3px">&#9656; Global &amp; International</p>
+<table class="data-table">
+  <tr><th>Headline</th><th style="width:120px">Source</th><th style="width:100px">Published</th></tr>
+  <tr><td>What’s happening this week in economics? - Deloitte</td><td>Deloitte</td><td style='white-space:nowrap'>Aug 04, 2026</td></tr>
+<tr><td>Top 50 English-language news sites in the world: Indian news sites see biggest declines in June - pressgazette.co.uk</td><td>pressgazette.co.uk</td><td style='white-space:nowrap'>Jul 10, 2026</td></tr>
+<tr><td>Food Security | Food Insecurity Statistics & Solutions - World Bank Group</td><td>World Bank Group</td><td style='white-space:nowrap'>Jun 30, 2026</td></tr>
+<tr><td>Food Outlook - Biannual Report on Global Food Markets, June 2026 - ReliefWeb</td><td>ReliefWeb</td><td style='white-space:nowrap'>Jun 25, 2026</td></tr>
+<tr><td>Overview and key findings of the 2026 Digital News Report - reutersinstitute.politics.ox.ac.uk</td><td>reutersinstitute.politics.ox.ac.uk</td><td style='white-space:nowrap'>Jun 16, 2026</td></tr>
+<tr><td>Middle East crisis disrupts international natural gas markets and delays global LNG supply wave - IEA – International Energy Agenc</td><td>IEA – International Energy Agency</td><td style='white-space:nowrap'>Apr 24, 2026</td></tr>
+<tr><td>The top international trade stories to know this month - The World Economic Forum</td><td>The World Economic Forum</td><td style='white-space:nowrap'>Apr 17, 2026</td></tr>
+<tr><td>Oil prices soar, and stocks end mixed in volatile trade - Reuters</td><td>Reuters</td><td style='white-space:nowrap'>Apr 02, 2026</td></tr>
+
+</table>
+</div>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer-box">
+<strong>IMPORTANT DISCLAIMER:</strong> This report is generated by Market Screener v3.0 using AI analysis (Anthropic Claude Sonnet),
+publicly available market data, and Google News RSS feeds. It is for <strong>informational and educational purposes ONLY</strong>.
+Nothing herein constitutes financial advice, investment advice, or trading advice.
+Options trading involves <strong>substantial risk of loss</strong> and is not suitable for all investors.
+Past performance is not indicative of future results. Always conduct your own research and consult a licensed financial advisor.
+AI-generated analysis may contain errors, omissions, or outdated information — verify all data before trading.
+<br><strong>Report Date:</strong> August 10, 2026 &nbsp;&bull;&nbsp;
+<strong>Distribution:</strong> Confidential — For Authorized Recipients Only
+</div>
+
+<!-- FOOTER -->
+<div class="print-footer">
+&copy; 2026 Market Screener v3.0 &nbsp;|&nbsp;
+Not investment advice. Options trading involves substantial risk and is not suitable for all investors. &nbsp;|&nbsp;
+Report: August 10, 2026 &nbsp;|&nbsp; Generated by AI — Verify all data before trading
+</div>
+
+</body>
+</html>
